@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/jpeg" href="/app-logo.jpeg" />
+    <link rel="apple-touch-icon" href="/app-logo.jpeg" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#1e40af" />
+    <meta name="description" content="PESU Hub - Campus super-app for PES University students" />
+    <title>PESimens</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <!--
+      Service-worker recovery guard.
+      If a stale SW is intercepting JS module requests and returning text/html
+      (causing "Failed to load module script" MIME errors and a black screen),
+      this script detects the condition and forces an immediate SW unregistration
+      + page reload so the browser fetches fresh assets from the network.
+
+      Detection: if the page has been loaded before (sessionStorage flag set) but
+      the React root is still empty after 4 seconds, a stale SW is likely the cause.
+      We also proactively unregister on every load so the next navigation is clean.
+    -->
+    <script>
+      (function () {
+        if (!('serviceWorker' in navigator)) return;
+
+        // On every page load, tell any waiting SW to skip waiting so it activates
+        // immediately and serves the correct assets on the next navigation.
+        navigator.serviceWorker.getRegistration().then(function (reg) {
+          if (!reg) return;
+          if (reg.waiting) {
+            reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+          }
+          // If the SW is controlling this page, listen for the controller change
+          // and reload once so the new SW takes over cleanly.
+          navigator.serviceWorker.addEventListener('controllerchange', function () {
+            // Only reload if we haven't already done so this session to avoid loops.
+            if (sessionStorage.getItem('sw_reload_done')) return;
+            sessionStorage.setItem('sw_reload_done', '1');
+            window.location.reload();
+          });
+        });
+
+        // Black-screen recovery: if the #root div is still empty after 5 seconds,
+        // a stale SW is almost certainly serving wrong MIME types for JS chunks.
+        // Unregister all SWs and hard-reload to fetch fresh assets.
+        var recoveryTimer = setTimeout(function () {
+          var root = document.getElementById('root');
+          if (root && root.children.length === 0) {
+            navigator.serviceWorker.getRegistrations().then(function (regs) {
+              var unregPromises = regs.map(function (r) { return r.unregister(); });
+              Promise.all(unregPromises).then(function () {
+                // Clear all caches so the reload fetches everything fresh.
+                if ('caches' in window) {
+                  caches.keys().then(function (keys) {
+                    keys.forEach(function (key) { caches.delete(key); });
+                  });
+                }
+                window.location.reload();
+              });
+            });
+          }
+        }, 5000);
+
+        // Cancel the recovery timer if the app boots successfully.
+        window.addEventListener('DOMContentLoaded', function () {
+          var observer = new MutationObserver(function () {
+            var root = document.getElementById('root');
+            if (root && root.children.length > 0) {
+              clearTimeout(recoveryTimer);
+              observer.disconnect();
+            }
+          });
+          var root = document.getElementById('root');
+          if (root) observer.observe(root, { childList: true, subtree: false });
+        });
+      })();
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

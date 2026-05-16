@@ -1,6 +1,6 @@
 # Security
 
-This repository is intentionally limited to public-facing documentation and example configuration.
+This repository contains the public frontend UI and documentation. Core backend services and infrastructure remain private.
 
 ## Data handling
 
@@ -17,12 +17,12 @@ This repository is intentionally limited to public-facing documentation and exam
 
 ## Transparency notes
 
-If you publish this repo publicly, keep the source code private and use this repository only to describe:
+This public repo should be used to describe:
 
 - product overview
 - security posture
 - privacy and data-handling principles
-- deployment model
+- public frontend workflows
 - contact path for security issues
 
 ## Recommended public disclosures

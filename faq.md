@@ -21,7 +21,7 @@ There are three options:
 
 ## Is this repository open source?
 
-No. PESiMENs is a private, closed-source product. This public repository is a transparency and product showcase page — it does not contain any source code.
+No. PESiMENs is a private, closed-source product. This public repository contains the frontend UI and documentation, but the backend remains private and proprietary.
 
 ## Does this repo contain passwords or API keys?
 
@@ -41,7 +41,7 @@ Yes. Your PESU Academy credentials are encrypted before use and are never stored
 
 ## Can someone rebuild the app from this repo?
 
-No. This repo is intentionally minimal and does not include any application source code, backend logic, or database schema.
+You can run the frontend UI, but the full application requires the private backend and infrastructure.
 
 ## How do I report a security issue?
 

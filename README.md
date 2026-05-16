@@ -14,6 +14,7 @@
   <img src="https://img.shields.io/badge/Tailwind_CSS-4.2-06B6D4?logo=tailwindcss&logoColor=white" alt="Tailwind" />
   <img src="https://img.shields.io/badge/PWA-Enabled-5A0FC8?logo=pwa&logoColor=white" alt="PWA" />
   <img src="https://img.shields.io/badge/License-Proprietary-red" alt="License" />
+  <img src="https://img.shields.io/badge/GSSOC-2026-0A7F42" alt="GSSOC 2026" />
 </p>
 
 <p align="center">
@@ -27,8 +28,18 @@
 
 ## 📖 Table of Contents
 
+- [Quick Links](#-quick-links)
+- [Repository Scope](#-repository-scope)
 - [Overview](#-overview)
+- [About the Maintainer](#-about-the-maintainer)
 - [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [Architecture](#-architecture)
+- [Project Structure](#-project-structure)
+- [Getting Started (Frontend)](#-getting-started-frontend)
+- [Contributing (GSSOC 2026)](#-contributing-gssoc-2026)
+- [Beginner Tasks](#-beginner-tasks)
+- [Community Docs](#-community-docs)
 - [Security](#-security)
 - [Privacy](#-privacy)
 - [FAQ](#-faq)
@@ -38,9 +49,29 @@
 
 ---
 
+## 🔗 Quick Links
+
+- Product site: [pesimens.app](https://pesimens.app)
+- Contributing: [CONTRIBUTING.md](CONTRIBUTING.md)
+- Beginner tasks: [BEGINNER_TASKS.md](BEGINNER_TASKS.md)
+- Support: [SUPPORT.md](SUPPORT.md)
+- Security policy: [SECURITY.md](SECURITY.md)
+
+---
+
+## 🧭 Repository Scope
+
+This is the public frontend + documentation repo for PESiMENs.
+
+| Included here | Kept private |
+| --- | --- |
+| Frontend UI, landing page, and public docs | Backend services, infrastructure, and operational secrets |
+
+---
+
 ## 🌟 Overview
 
-PESiMENs is a closed-source student platform built to bring the most useful campus experiences into one polished app. It combines learning tools, community features, career tools, entertainment, and platform services into a single product. This public repo is intentionally limited to transparency, branding, and security information only. It does not expose the full application source or operational secrets.
+PESiMENs is a closed-source student platform built to bring the most useful campus experiences into one polished app. It combines learning tools, community features, career tools, entertainment, and platform services into a single product. This public repo is the community contribution and issue-tracking hub for GSSOC 2026 and contains the frontend UI plus public docs. Backend services and operational details remain private.
 
 ### At A Glance
 
@@ -58,6 +89,27 @@ PESiMENs is a closed-source student platform built to bring the most useful camp
 - Broad coverage across learning, community, career, and entertainment.
 - Athena AI for quick help and navigation.
 - Installable PWA experience with modern app behavior.
+
+---
+
+## 👤 About the Maintainer
+
+PESiMENs is built and maintained by **Darshan P Pawar**, a solo developer who built the platform from scratch. The private repository contains **~400 commits** covering product, frontend, backend, and infrastructure work.
+
+**Scope delivered:**
+
+- 30+ database tables across ~90 SQL migrations
+- 31 backend route modules with production-ready APIs
+- Integrations with Supabase, Razorpay, OneSignal, Gemini, Groq, Adzuna, and PESU Academy sync
+
+**Notable challenges solved:**
+
+- Stabilizing PESU Academy sync and rate-limit handling
+- Hardening auth flows and session/token handling
+- Making migrations resilient and idempotent as the schema evolved
+- Performance tuning for API throughput and frontend responsiveness
+
+Detailed implementation notes and operational specifics are maintained in the private repository.
 
 ---
 
@@ -129,6 +181,146 @@ The games hub mixes live titles with upcoming party-style games.
 - Built for discovery, engagement, and everyday utility.
 - Athena AI adds fast, intelligent support across the app.
 - Designed to feel modern, polished, and installable.
+
+---
+
+## 🛠 Tech Stack
+
+### Frontend
+
+- React 18
+- Vite
+- TypeScript
+- Tailwind CSS
+- TanStack React Query
+- Zustand
+- React Router
+
+### Backend (Private)
+
+- Node.js
+- Fastify
+- TypeScript
+- Supabase (PostgreSQL, Auth, Storage, Realtime)
+
+### PESU Sync Service
+
+- Python
+- FastAPI
+
+### Infrastructure
+
+- Vercel (frontend hosting)
+- Render (backend + sync service hosting)
+
+---
+
+## 🏗 Architecture
+
+PESiMENs uses a monorepo with a React frontend, a Fastify backend API, and a Python sync service. The frontend communicates with the backend over REST APIs, and the backend integrates with Supabase and external providers. Specific internal modules, routes, and operational details are kept private.
+
+```mermaid
+flowchart LR
+  subgraph Client
+    FE[React Frontend (PWA)]
+  end
+
+  subgraph Backend
+    API[Fastify API]
+  end
+
+  subgraph Data
+    DB[(Supabase PostgreSQL)]
+  end
+
+  subgraph External Services
+    Gemini[Gemini AI]
+    Razorpay[Razorpay]
+    OneSignal[OneSignal]
+    Adzuna[Adzuna]
+  end
+
+  FE -->|HTTPS REST| API
+  API --> DB
+  API --> Gemini
+  API --> Razorpay
+  API --> OneSignal
+  API --> Adzuna
+```
+
+---
+
+## 📁 Project Structure
+
+High-level layout (public):
+
+- `frontend/` React SPA
+- `backend/` Backend configuration placeholder (core code is private)
+- `docs/` Public documentation
+- `App_logos/` Brand assets
+
+---
+
+## 🚀 Getting Started (Frontend)
+
+This public repo ships the frontend UI. The backend and production services are private, so some features require mocked data or the live API.
+
+### Prerequisites
+
+- Node.js 18+
+- npm 9+
+
+### Install and run
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+The app runs on `http://localhost:5173`.
+
+### Environment setup
+
+```bash
+cp .env.example .env
+```
+
+If you have access to the live API, set `VITE_API_URL` accordingly.
+
+---
+
+## 🤝 Contributing (GSSOC 2026)
+
+Interested in helping out? Start with [CONTRIBUTING.md](CONTRIBUTING.md).
+
+- Issues are tracked on this repo with GSSOC labels and clear scope.
+- Contributions here focus on frontend UI and public docs.
+- If you need backend access for accurate diagnosis, request read access from the maintainer.
+- **We genuinely appreciate every contribution. Contributors will be recognized in the in-app About Us section to honor their work.**
+
+---
+
+## ✅ Beginner Tasks
+
+Start here: [BEGINNER_TASKS.md](BEGINNER_TASKS.md)
+
+---
+
+## 📚 Community Docs
+
+| Document | Purpose |
+| --- | --- |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | How to contribute and submit PRs |
+| [BEGINNER_TASKS.md](BEGINNER_TASKS.md) | Starter-friendly tasks |
+| [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) | Expected community behavior |
+| [SUPPORT.md](SUPPORT.md) | Where to get help |
+| [SECURITY.md](SECURITY.md) | Security reporting and guidance |
+| [Privacy policy](privacy.md) | Privacy principles |
+| [FAQ](faq.md) | Common questions |
+| [Project status](docs/PROJECT_STATUS.md) | Public roadmap and status |
+| [Quick start guide](docs/QUICK_START_GUIDE.md) | Frontend setup quick start |
+| [Historical changelog](docs/HISTORICAL_CHANGELOG.md) | Public milestone summary |
 
 ---
 
@@ -249,11 +441,11 @@ Common public questions about PESiMENs.
 | Question | Answer |
 |----------|--------|
 | **What is PESiMENs?** | A private, polished campus platform for PES University students. |
-| **Is this repo open source?** | No. It is a public-facing product and trust page, not the source code. |
+| **Is this repo open source?** | No. It is public and accepts contributions, but it remains proprietary. The frontend code is public; the backend is private. |
 | **Does this repo contain secrets?** | No. Only public docs and placeholder examples belong here. |
 | **Where is the app live?** | The product site is [pesimens.app](https://pesimens.app). |
 | **What is Athena AI?** | A built-in assistant powered by Gemini and Groq. |
-| **Can I rebuild the app from this repo?** | No. It is intentionally minimal and non-reconstructive. |
+| **Can I rebuild the app from this repo?** | You can run the frontend UI, but the full app requires the private backend and infrastructure. |
 
 ---
 
@@ -276,8 +468,7 @@ Suggested image types:
 
 This public repo intentionally excludes:
 
-- application source code
-- backend logic
+- core backend services
 - database schema details
 - secret keys and credentials
 - internal debug logs
@@ -288,7 +479,7 @@ This public repo intentionally excludes:
 
 ## 📄 License
 
-**Proprietary and closed-source**. All rights reserved. This codebase is not open source and is maintained as a commercial product.
+**All rights reserved.** This repository and its contents are proprietary and confidential. No part of this repository may be copied, modified, distributed, or used without the prior written permission of the copyright holder.
 
 ---
 

@@ -1,0 +1,24 @@
+{
+  "name": "PESimens",
+  "short_name": "PESimens",
+  "description": "PESU campus super-app — PYQs, mentors, placements & more",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1e40af",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/app-logo.jpeg",
+      "sizes": "836x823",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/app-logo.jpeg",
+      "sizes": "836x823",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}
