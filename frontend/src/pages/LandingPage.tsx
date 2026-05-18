@@ -48,6 +48,11 @@ export default function LandingPage() {
           50% { transform: translate3d(-5%, -4%, 0) scale(0.96); }
           100% { transform: translate3d(7%, 6%, 0) scale(1.06); }
         }
+        
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-20px); }
+        }
 
         @keyframes floatArrow {
           0% { transform: translateY(0); opacity: 0.5; }
