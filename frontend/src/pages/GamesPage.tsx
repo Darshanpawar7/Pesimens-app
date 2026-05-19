@@ -7,6 +7,7 @@ interface GameEntry {
   icon: string
   playerCount: string
   route: string | null
+  comingSoon?: boolean
 }
 
 const GAMES: GameEntry[] = [
@@ -41,6 +42,7 @@ const GAMES: GameEntry[] = [
     icon: '🎨',
     playerCount: '3–8',
     route: null,
+    comingSoon: true,
   },
 ]
 
@@ -68,7 +70,14 @@ function GameCard({ game }: GameCardProps) {
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="mb-3 text-4xl">{game.icon}</div>
-          <h3 className="mb-2 text-lg font-semibold text-white">{game.name}</h3>
+          <h3 className="mb-2 flex items-center gap-2 text-lg font-semibold text-white">
+            {game.name}
+            {game.comingSoon && (
+            <span className="inline-flex items-center rounded-full bg-white/10 px-2 py-1 text-xs font-medium text-white/80">
+            Coming Soon
+            </span>
+      )}
+          </h3>
           <p className="mb-3 text-sm text-white/70">{game.description}</p>
           <div className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white/80">
             <span>👥</span>
