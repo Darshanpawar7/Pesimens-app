@@ -55,7 +55,7 @@ const lazyImport = (importFn: () => Promise<any>) => {
         if (reloadCount < 2) {
           sessionStorage.setItem('chunk_reload_count', String(reloadCount + 1))
           window.location.reload()
-          return new Promise(() => {}) // pending promise prevents render while reloading
+          return new Promise(() => { }) // pending promise prevents render while reloading
         }
       }
       throw error
@@ -88,6 +88,7 @@ const GamesPage = lazy(lazyImport(() => import('./pages/GamesPage')))
 const LudoPage = lazy(lazyImport(() => import('./pages/LudoPage')))
 const ChessPage = lazy(lazyImport(() => import('./pages/ChessPage')))
 const PESBluffPage = lazy(lazyImport(() => import('./pages/PESBluffPage')))
+const NotFoundPage = lazy(lazyImport(() => import('./pages/NotFoundPage')))
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -160,7 +161,14 @@ function App() {
                     <Route path="/games/bluff" element={<Suspense fallback={<PageLoader />}><PESBluffPage /></Suspense>} />
                   </Route>
 
-                  <Route path="*" element={<Navigate to="/" replace />} />
+                  <Route
+                    path="*"
+                    element={
+                      <Suspense fallback={<PageLoader />}>
+                        <NotFoundPage />
+                      </Suspense>
+                    }
+                  />
                 </Routes>
               </AuthProvider>
             </BrowserRouter>
