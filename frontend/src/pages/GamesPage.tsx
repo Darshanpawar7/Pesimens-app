@@ -57,14 +57,22 @@ function GameCard({ game }: GameCardProps) {
     }
   }
 
+  const isComingSoon = !game.route
+
   return (
     <div
-      className="rounded-2xl border p-6 transition-all hover:border-white/20"
+      className="relative rounded-2xl border p-6 transition-all hover:border-white/20"
       style={{
         background: '#1a1a1a',
         border: '1px solid rgba(255,255,255,0.08)',
       }}
     >
+      {isComingSoon && (
+        <span className="absolute top-4 right-4 rounded-full border border-yellow-500/20 bg-yellow-500/10 px-2.5 py-0.5 text-[10px] font-semibold tracking-wider text-yellow-500 uppercase backdrop-blur-md">
+          Coming Soon
+        </span>
+      )}
+
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="mb-3 text-4xl">{game.icon}</div>
