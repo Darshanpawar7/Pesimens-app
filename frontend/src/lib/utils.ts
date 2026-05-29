@@ -17,3 +17,16 @@ export function formatDistanceToNow(dateStr: string): string {
   if (days < 7) return `${days}d ago`
   return new Date(dateStr).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })
 }
+
+/**
+ * Returns descriptive alt text for a club cover image.
+ * Priority: explicit alt text → club name + suffix → generic fallback.
+ */
+export function getClubImageAlt(
+  clubName?: string,
+  explicitAlt?: string,
+): string {
+  if (explicitAlt) return explicitAlt
+  if (clubName) return `${clubName} cover image`
+  return 'Club cover image'
+}
