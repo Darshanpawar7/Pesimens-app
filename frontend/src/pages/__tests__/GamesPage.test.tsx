@@ -63,7 +63,7 @@ describe('GamesPage', () => {
 
     // Find and click the Play button for Ludo (first Play button)
     const playButtons = screen.getAllByText('Play')
-    expect(playButtons.length).toBeGreaterThanOrEqual(2) // Ludo + Chess both have Play buttons
+    expect(playButtons.length).toBeGreaterThanOrEqual(3) // Ludo + Bluff + Chess have Play buttons
 
     // Click the first Play button (Ludo)
     await user.click(playButtons[0])
@@ -79,17 +79,18 @@ describe('GamesPage', () => {
         <Routes>
           <Route path="/games" element={<GamesPage />} />
           <Route path="/games/ludo" element={<div>Ludo Page</div>} />
+          <Route path="/games/bluff" element={<div>Bluff Page</div>} />
           <Route path="/games/chess" element={<div>Chess Page</div>} />
         </Routes>
       </MemoryRouter>
     )
 
-    // Find and click the Play button for Chess (second Play button)
+    // Find and click the Play button for Chess (third Play button)
     const playButtons = screen.getAllByText('Play')
-    expect(playButtons.length).toBeGreaterThanOrEqual(2)
+    expect(playButtons.length).toBeGreaterThanOrEqual(3)
 
-    // Click the second Play button (Chess)
-    await user.click(playButtons[1])
+    // Click the third Play button (Chess)
+    await user.click(playButtons[2])
 
     // Should navigate to Chess page
     expect(screen.getByText('Chess Page')).toBeTruthy()
@@ -105,8 +106,8 @@ describe('GamesPage', () => {
     // Find all "Coming Soon" buttons
     const comingSoonButtons = screen.getAllByText('Coming Soon')
 
-    // Should have 2 Coming Soon buttons (PES Bluff, PES Drawl) — Chess now has a Play button
-    expect(comingSoonButtons.length).toBe(2)
+    // Should have 1 Coming Soon button (PES Drawl)
+    expect(comingSoonButtons.length).toBe(1)
 
     // All Coming Soon buttons should be disabled
     comingSoonButtons.forEach(button => {
@@ -119,11 +120,11 @@ describe('GamesPage', () => {
 
     // Chess should have a Play button since route is set
     const playButtons = screen.getAllByText('Play')
-    expect(playButtons.length).toBeGreaterThanOrEqual(2) // Ludo + Chess
+    expect(playButtons.length).toBeGreaterThanOrEqual(3) // Ludo + Bluff + Chess
 
     // Chess should NOT have a Coming Soon button
     const comingSoonButtons = screen.getAllByText('Coming Soon')
-    expect(comingSoonButtons.length).toBe(2) // Only PES Bluff and PES Drawl
+    expect(comingSoonButtons.length).toBe(1) // Only PES Drawl
   })
 
   it('renders game descriptions', () => {
