@@ -16,6 +16,7 @@ import { useAuthStore } from '@/store/auth'
 import { UserAvatar } from '@/components/ui/avatar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { AIChatPanel } from '@/components/ai/AIChatPanel'
+import { addRecentModule, getRecentModules, type RecentModule } from '@/lib/recentModules'
 
 interface EventItem {
   id: string
@@ -189,7 +190,7 @@ export default function HomePage() {
   const lastTouchTRef = useRef(0)
   const isSwipeNavigatingRef = useRef(false)
   const [showAthenaAI, setShowAthenaAI] = useState(false)
-
+  const [recentModules, setRecentModules] = useState<RecentModule[]>(() => getRecentModules())
   const SWIPE_ARM_PX = 64
   const SWIPE_MIN_DISTANCE_PX = 34
   const SWIPE_MIN_VELOCITY = 0.34
@@ -567,7 +568,11 @@ export default function HomePage() {
               <button
                 key={action.label}
                 type="button"
-                onClick={() => navigate(action.to)}
+                onClick={() => {
+                  addRecentModule(action.label, action.to)
+                  setRecentModules(getRecentModules())
+                  navigate(action.to)
+                }}
                 className="group flex min-h-[74px] flex-col items-center justify-center gap-2 rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] py-3 text-center shadow-[0_4px_20px_rgba(0,0,0,0.22)] transition hover:-translate-y-0.5 hover:border-gray-500/35 hover:bg-[var(--bg-elevated)]"
               >
                 <Icon className="h-5 w-5 text-gray-300 transition group-hover:scale-105 group-hover:text-white" />
@@ -575,6 +580,33 @@ export default function HomePage() {
               </button>
             )
           })}
+        </section>
+
+        <section className={`rounded-2xl border border-[var(--border)] bg-[var(--bg-card)] shadow-[0_4px_20px_rgba(0,0,0,0.22)] ${blockPaddingClass}`}>
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-[var(--text-primary)]">
+              Recently Visited
+            </h2>
+          </div>
+
+          {recentModules.length === 0 ? (
+            <p className="text-sm text-[var(--text-secondary)]">
+              No recently visited modules yet.
+            </p>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              {recentModules.map((module) => (
+                <button
+                  key={module.path}
+                  type="button"
+                  onClick={() => navigate(module.path)}
+                  className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-sm text-[var(--text-primary)] transition hover:bg-gray-800"
+                >
+                  {module.name}
+                </button>
+              ))}
+            </div>
+          )}
         </section>
 
         <section
