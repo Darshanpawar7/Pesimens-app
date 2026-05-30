@@ -8,6 +8,7 @@ export interface Club {
   category: string
   logo_url?: string
   cover_image_url?: string
+  cover_image_alt?: string
   instagram?: string
   linkedin?: string
   website?: string
