@@ -355,7 +355,7 @@ export default function ProfilePage() {
               <button
                 type="button"
                 onClick={() => {
-                  if (viewedProfile.avatar_url) {
+                  if (viewedProfile?.avatar_url ?? null) {
                     setAvatarLightboxOpen(true)
                     return
                   }
@@ -363,7 +363,7 @@ export default function ProfilePage() {
                 }}
                 className="group relative"
               >
-                <UserAvatar name={viewedProfile.display_name} avatarUrl={viewedProfile.avatar_url} size="xl" className="h-20 w-20 ring-2 ring-[#2a2a2a]" />
+                <UserAvatar name={viewedProfile?.display_name ?? ''} avatarUrl={viewedProfile.avatar_url} size="xl" className="h-20 w-20 ring-2 ring-[#2a2a2a]" />
                 {isOwnProfile && (
                   <span className="absolute inset-0 grid place-items-center rounded-full bg-black/0 text-xs opacity-0 transition group-hover:bg-black/45 group-hover:opacity-100">
                     <span className="rounded-full bg-[#1a1a1a] p-2"><Upload className="h-4 w-4" /></span>
@@ -484,7 +484,7 @@ export default function ProfilePage() {
                 {links.instagram && <ExternalLink className="h-3.5 w-3.5 text-white/60" />}
               </a>
               <a href={links.github || '#'} target="_blank" rel="noreferrer" className="flex items-center justify-between rounded-lg bg-[#111111] px-3 py-2 hover:bg-[#1a1a1a]">
-                <span className="inline-flex items-center gap-2"><Github className="h-4 w-4" />{viewedProfile.github_username ? `@${viewedProfile.github_username}` : (isOwnProfile ? 'Add GitHub ->' : 'Not set')}</span>
+                <span className="inline-flex items-center gap-2"><Github className="h-4 w-4" />{viewedProfile?.github_username ?? '' ? `@${viewedProfile.github_username}` : (isOwnProfile ? 'Add GitHub ->' : 'Not set')}</span>
                 {viewedProfile.github_username && (
                   <span className="text-xs text-amber-300">
                     {githubQuery.data?.profile.public_repos ?? viewedProfile.github_repos} repos
