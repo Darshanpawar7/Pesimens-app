@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { ApiError, apiFetch } from '@/lib/api'
 import { cn, formatDistanceToNow } from '@/lib/utils'
 import { useToast } from '@/components/ui/use-toast'
+import { ConfessionSkeleton } from '@/components/ui/skeleton'
 import { useConfessionsRealtime } from '@/hooks/useConfessionsRealtime'
 import { useAuthStore } from '@/store/auth'
 
@@ -847,14 +848,9 @@ export default function ConfessionsPage() {
 
             <div>
               {confessionsQuery.isLoading && (
-                <div className="space-y-2">
+                <div className="space-y-0">
                   {safeArray(Array.from({ length: 3 })).map((_, idx) => (
-                    <div key={idx} className="overflow-hidden rounded-[12px] border border-[#2a2a2a]">
-                      <div className="flex h-[140px]">
-                        <div className="w-[44px] border-r border-[#2a2a2a] bg-[#111111]" />
-                        <div className="flex-1 animate-pulse bg-[#1a1a1a]" />
-                      </div>
-                    </div>
+                    <ConfessionSkeleton key={idx} />
                   ))}
                 </div>
               )}
@@ -1193,9 +1189,9 @@ export default function ConfessionsPage() {
               <div ref={loadMoreRef} className="h-4" />
 
               {confessionsQuery.isFetchingNextPage && (
-                <div className="space-y-2">
+                <div className="space-y-0 mt-4">
                   {safeArray(Array.from({ length: 2 })).map((_, idx) => (
-                    <div key={idx} className="h-24 animate-pulse rounded-xl border border-[#2a2a2a] bg-[#1a1a1a]" />
+                    <ConfessionSkeleton key={idx} />
                   ))}
                 </div>
               )}
