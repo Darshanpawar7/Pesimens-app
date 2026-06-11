@@ -90,6 +90,8 @@ export function PYQsPage() {
     course: '',
     subject: '',
     exam_type: '',
+    tag: '',
+    difficulty: '',
     sort: 'recent' as 'recent' | 'upvotes',
   })
   const [subjectInput, setSubjectInput] = useState('')
@@ -137,6 +139,8 @@ export function PYQsPage() {
     ...(filters.course && { course: filters.course }),
     ...(filters.subject && { subject: filters.subject }),
     ...(filters.exam_type && { exam_type: filters.exam_type }),
+    ...(filters.tag && { tag: filters.tag }),
+    ...(filters.difficulty && { difficulty: filters.difficulty }),
     sort: filters.sort,
   }
 
@@ -329,8 +333,8 @@ function FilterPanel({
   materialsLoading,
   activeSubject,
 }: {
-  filters: { course: string; subject: string; exam_type: string; sort: 'recent' | 'upvotes' }
-  setFilters: React.Dispatch<React.SetStateAction<{ course: string; subject: string; exam_type: string; sort: 'recent' | 'upvotes' }>>
+  filters: { course: string; subject: string; exam_type: string; tag: string; difficulty: string; sort: 'recent' | 'upvotes' }
+  setFilters: React.Dispatch<React.SetStateAction<{ course: string; subject: string; exam_type: string; tag: string; difficulty: string; sort: 'recent' | 'upvotes' }>>
   subjectInput: string
   setSubjectInput: React.Dispatch<React.SetStateAction<string>>
   applyFilters: () => void
@@ -367,6 +371,24 @@ function FilterPanel({
             </option>
           ))}
         </select>
+
+        <select
+          className="h-10 w-full rounded-lg border border-[#2a2a2a] bg-[#111111] px-3 text-sm text-white outline-none focus:border-[#6366f1]"
+          value={filters.difficulty}
+          onChange={e => setFilters(f => ({ ...f, difficulty: e.target.value }))}
+        >
+          <option value="">Any Difficulty</option>
+          <option value="1-2">Easy (1-2 Stars)</option>
+          <option value="3-4">Medium (3-4 Stars)</option>
+          <option value="4-5">Hard (4-5 Stars)</option>
+        </select>
+
+        <Input
+          className="h-10 w-full rounded-lg border-[#2a2a2a] bg-[#111111] px-3 text-white placeholder:text-white/40 focus-visible:border-[#6366f1]"
+          placeholder="Filter by tag (e.g. recursion)"
+          value={filters.tag}
+          onChange={e => setFilters(f => ({ ...f, tag: e.target.value }))}
+        />
 
         <div className="flex gap-2">
           <Input
