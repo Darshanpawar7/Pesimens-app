@@ -17,6 +17,7 @@ interface Filters {
   exam_type?: string
   year?: string
   tag?: string
+  difficulty?: string
   sort?: 'recent' | 'upvotes'
 }
 
@@ -34,6 +35,7 @@ function buildUrl(filters: Filters, cursor?: string) {
   if (filters.exam_type) params.set('exam_type', filters.exam_type)
   if (filters.year) params.set('year', filters.year)
   if (filters.tag) params.set('tag', filters.tag)
+  if (filters.difficulty) params.set('difficulty', filters.difficulty)
   if (filters.sort) params.set('sort', filters.sort)
   if (cursor) params.set('cursor', cursor)
   const qs = params.toString()
