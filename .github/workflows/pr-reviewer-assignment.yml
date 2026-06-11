@@ -1,0 +1,33 @@
+name: PR Reviewer Assignment
+
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  assign-reviewer:
+    if: github.event.pull_request.user.login != github.repository_owner && github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    env:
+      PR_REVIEWER: ${{ vars.PR_DEFAULT_REVIEWER }}
+    steps:
+      - name: Request reviewer
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const reviewer = process.env.PR_REVIEWER || 'vijaypatil477';
+
+            try {
+              await github.rest.pulls.requestReviewers({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.payload.pull_request.number,
+                reviewers: [reviewer],
+              });
+            } catch (error) {
+              console.log(`Skipping reviewer assignment: ${error.message}`);
+            }
