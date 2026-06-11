@@ -17,6 +17,8 @@ const moreSheetItems = [
   { to: '/timetable', emoji: '🗓', label: 'Timetable' },
   { to: '/notes', emoji: '📝', label: 'Notes' },
   { to: '/marketplace', emoji: '🛒', label: 'Marketplace' },
+  { to: '/campus', emoji: '🏫', label: 'Campus' },
+  { to: '/mentors', emoji: '🎓', label: 'Mentors' },
   { to: '/contact', emoji: '🛟', label: 'Report/Contact' },
   { to: '/messages', emoji: '💬', label: 'Messages' },
   { to: '/people', emoji: '👥', label: 'People' },
