@@ -88,6 +88,7 @@ const GamesPage = lazy(lazyImport(() => import('./pages/GamesPage')))
 const LudoPage = lazy(lazyImport(() => import('./pages/LudoPage')))
 const ChessPage = lazy(lazyImport(() => import('./pages/ChessPage')))
 const PESBluffPage = lazy(lazyImport(() => import('./pages/PESBluffPage')))
+const PESDrawlPage = lazy(lazyImport(() => import('./pages/PESDrawlPage.tsx')))
 const NotFoundPage = lazy(lazyImport(() => import('./pages/NotFoundPage')))
 
 const queryClient = new QueryClient({
@@ -159,6 +160,7 @@ function App() {
                     <Route path="/games/ludo" element={<Suspense fallback={<PageLoader />}><LudoPage /></Suspense>} />
                     <Route path="/games/chess" element={<ProtectedRoute><Suspense fallback={<PageLoader />}><ChessPage /></Suspense></ProtectedRoute>} />
                     <Route path="/games/bluff" element={<Suspense fallback={<PageLoader />}><PESBluffPage /></Suspense>} />
+                    <Route path="/games/drawl" element={<Suspense fallback={<PageLoader />}><PESDrawlPage /></Suspense>} />
                   </Route>
 
                   <Route
