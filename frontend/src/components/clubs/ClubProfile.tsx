@@ -8,6 +8,12 @@ import { UserAvatar } from '../ui/avatar'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../ui/tabs'
 import { useToast } from '../ui/use-toast'
 import type { Event } from '../../hooks/useEvents'
+import { useState } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { apiFetch } from '../../lib/api'
+import { useAuthStore } from '../../store/auth'
+import { StudyGroupBoard } from './StudyGroupBoard'
+import { Button } from '../ui/button'
 
 interface ClubProfileProps {
   club: Club
@@ -33,6 +39,57 @@ export function ClubProfile({ club, currentUserId, onEdit }: ClubProfileProps) {
   const userRole = club.user_membership?.role
   const isAdmin = userRole === 'admin'
   const isMember = !!userRole
+
+  const { profile } = useAuthStore()
+  const queryClient = useQueryClient()
+  const [activeRoom, setActiveRoom] = useState<{ id: string; name: string } | null>(null)
+  const [newRoomName, setNewRoomName] = useState('')
+
+  const roomsQuery = useQuery({
+    queryKey: ['club-rooms', club.id],
+    queryFn: () => apiFetch<{ rooms: Array<{ id: string; name: string; created_at: string }> }>(`/api/clubs/${club.id}/rooms`).catch(() => ({ rooms: [] })),
+    enabled: isMember,
+  })
+
+  const createRoomMutation = useMutation({
+    mutationFn: (name: string) => apiFetch<{ room: { id: string; name: string } }>(`/api/clubs/${club.id}/rooms`, {
+      method: 'POST',
+      body: JSON.stringify({ name }),
+    }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['club-rooms', club.id] })
+      setNewRoomName('')
+      toast({ variant: 'success', title: 'Study group created' })
+    },
+    onError: (err) => {
+      // For MVP without backend, we mock creation
+      const mockId = `mock-${Date.now()}`
+      queryClient.setQueryData(['club-rooms', club.id], (old: any) => ({
+        rooms: [...(old?.rooms || []), { id: mockId, name: newRoomName, created_at: new Date().toISOString() }]
+      }))
+      setNewRoomName('')
+      toast({ variant: 'success', title: 'Study group created (Mock)' })
+    }
+  })
+
+  const deleteRoomMutation = useMutation({
+    mutationFn: (roomId: string) => apiFetch<{ success: boolean }>(`/api/clubs/${club.id}/rooms/${roomId}`, {
+      method: 'DELETE',
+    }),
+    onSuccess: (_, roomId) => {
+      queryClient.invalidateQueries({ queryKey: ['club-rooms', club.id] })
+      if (activeRoom?.id === roomId) setActiveRoom(null)
+      toast({ variant: 'success', title: 'Room deleted' })
+    },
+    onError: (err, roomId) => {
+      // Mock delete
+      queryClient.setQueryData(['club-rooms', club.id], (old: any) => ({
+        rooms: (old?.rooms || []).filter((r: any) => r.id !== roomId)
+      }))
+      if (activeRoom?.id === roomId) setActiveRoom(null)
+      toast({ variant: 'success', title: 'Room deleted (Mock)' })
+    }
+  })
 
   const handleJoin = async () => {
     try {
@@ -136,6 +193,7 @@ export function ClubProfile({ club, currentUserId, onEdit }: ClubProfileProps) {
           <TabsTrigger value="about">About</TabsTrigger>
           <TabsTrigger value="events">Events {club.upcoming_events && club.upcoming_events.length > 0 && `(${club.upcoming_events.length})`}</TabsTrigger>
           <TabsTrigger value="members">Members {club.members && `(${club.members.length})`}</TabsTrigger>
+          {isMember && <TabsTrigger value="study">Study Space</TabsTrigger>}
         </TabsList>
 
         <TabsContent value="about" className="pt-4">
@@ -176,6 +234,67 @@ export function ClubProfile({ club, currentUserId, onEdit }: ClubProfileProps) {
             </div>
           )}
         </TabsContent>
+
+        {isMember && (
+          <TabsContent value="study" className="pt-4">
+            {activeRoom && profile ? (
+              <StudyGroupBoard
+                roomId={activeRoom.id}
+                roomName={activeRoom.name}
+                clubId={club.id}
+                currentUser={{
+                  id: profile.id,
+                  display_name: profile.display_name,
+                  avatar_url: profile.avatar_url,
+                }}
+                onLeave={() => setActiveRoom(null)}
+                onDelete={isAdmin ? () => {
+                  if (confirm(`Delete room "${activeRoom.name}" permanently?`)) {
+                    deleteRoomMutation.mutate(activeRoom.id)
+                  }
+                } : undefined}
+              />
+            ) : (
+              <div className="space-y-6">
+                <div className="flex items-center gap-3">
+                  <input
+                    type="text"
+                    value={newRoomName}
+                    onChange={(e) => setNewRoomName(e.target.value)}
+                    placeholder="New study group name..."
+                    className="flex-1 h-10 px-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm outline-none focus:border-indigo-500"
+                  />
+                  <Button
+                    onClick={() => newRoomName.trim() && createRoomMutation.mutate(newRoomName.trim())}
+                    disabled={createRoomMutation.isPending || !newRoomName.trim()}
+                  >
+                    Create Group
+                  </Button>
+                </div>
+
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {roomsQuery.isLoading ? (
+                    <p className="text-sm text-gray-500">Loading rooms...</p>
+                  ) : roomsQuery.data?.rooms.length === 0 ? (
+                    <p className="text-sm text-gray-500 col-span-2 text-center py-6">No active study groups. Create one above!</p>
+                  ) : (
+                    roomsQuery.data?.rooms.map(room => (
+                      <div key={room.id} className="p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-[#1a1a1a] flex items-center justify-between">
+                        <div>
+                          <h4 className="font-semibold text-gray-900 dark:text-white">{room.name}</h4>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">Active now</p>
+                        </div>
+                        <Button variant="outline" size="sm" onClick={() => setActiveRoom(room)}>
+                          Join
+                        </Button>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   )
