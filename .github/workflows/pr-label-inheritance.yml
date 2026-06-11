@@ -1,0 +1,67 @@
+name: PR Label Inheritance
+
+on:
+  pull_request:
+    types: [opened, reopened, edited, synchronize]
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: write
+
+jobs:
+  inherit-labels:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Inherit issue labels
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const text = `${pr.title}\n${pr.body || ''}`;
+            const issueNumbers = [...new Set([...text.matchAll(/#(\d+)/g)].map((match) => Number(match[1])))]
+              .filter((number) => Number.isInteger(number));
+
+            const excludedPrefixes = ['level:', 'type:', 'quality:', 'gssoc:', 'mentor:'];
+            const labelsToAdd = new Set();
+
+            for (const issueNumber of issueNumbers) {
+              try {
+                const { data: issue } = await github.rest.issues.get({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issueNumber,
+                });
+
+                if (!issue.pull_request) {
+                  for (const label of issue.labels) {
+                    const labelName = typeof label === 'string' ? label : label.name;
+                    if (!labelName) continue;
+
+                    const lower = labelName.toLowerCase();
+                    if (!excludedPrefixes.some((prefix) => lower.startsWith(prefix))) {
+                      labelsToAdd.add(labelName);
+                    }
+                  }
+                }
+              } catch (error) {
+                console.log(`Skipping issue #${issueNumber}: ${error.message}`);
+              }
+            }
+
+            if (new Date().getUTCMonth() === 9) {
+              labelsToAdd.add('hacktoberfest-accepted');
+            }
+
+            for (const label of labelsToAdd) {
+              try {
+                await github.rest.issues.addLabels({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: pr.number,
+                  labels: [label],
+                });
+              } catch (error) {
+                console.log(`Skipping missing/unavailable label ${label}: ${error.message}`);
+              }
+            }

@@ -1,0 +1,46 @@
+name: Issue Triage Labeler
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  triage-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Apply type and gssoc labels
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const text = `${issue.title}\n${issue.body || ''}`.toLowerCase();
+
+            let typeLabel = 'type:chore';
+            if (/(bug|error|crash|broken|fail|issue)/.test(text)) {
+              typeLabel = 'type:bug';
+            } else if (/(feature|enhancement|improve|add|new)/.test(text)) {
+              typeLabel = 'type:feature';
+            } else if (/(docs|documentation|readme|guide|tutorial)/.test(text)) {
+              typeLabel = 'type:docs';
+            } else if (/(question|help|support|how to)/.test(text)) {
+              typeLabel = 'type:question';
+            }
+
+            const labels = [typeLabel, 'gssoc'];
+
+            for (const label of labels) {
+              try {
+                await github.rest.issues.addLabels({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issue.number,
+                  labels: [label],
+                });
+              } catch (error) {
+                console.log(`Skipping missing/unavailable label ${label}: ${error.message}`);
+              }
+            }
