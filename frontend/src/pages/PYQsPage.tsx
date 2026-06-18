@@ -423,7 +423,7 @@ function FilterPanel({
           {!materialsLoading && materials.length > 0 && (
             <div className="mt-2 space-y-2">
               {materials.slice(0, 4).map((item) => {
-                const url = item.signed_url || item.file_path || item.file_url || ''
+                const url = item.signed_url || item.file_url || item.file_path || ''
                 const fileName = item.file_name || `${item.title}.pdf`
                 const status = toDisplayStatus(item.processing_status)
                 const extractionMethod = item.extraction_method || 'unknown'

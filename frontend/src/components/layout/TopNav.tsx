@@ -1,22 +1,11 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Search, X } from 'lucide-react'
+import { X, Search } from 'lucide-react'
 import { NotificationBell } from './NotificationBell'
 import { ProfileMenu } from './ProfileMenu'
+import { GlobalSearch } from '../common/GlobalSearch'
 
 export function TopNav() {
-  const navigate = useNavigate()
-  const [searchQuery, setSearchQuery] = useState('')
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false)
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (searchQuery.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`)
-      setSearchQuery('')
-      setMobileSearchOpen(false)
-    }
-  }
 
   return (
     <header
@@ -36,43 +25,26 @@ export function TopNav() {
           </span>
         )}
 
-        {/* Mobile search bar (expanded) */}
+        {/* Mobile search (expanded) */}
         {mobileSearchOpen && (
-          <form onSubmit={handleSearch} className="flex flex-1 items-center gap-2 lg:hidden">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                autoFocus
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                placeholder="Search people, marketplace, events, PYQs..."
-                className="w-full rounded-xl border py-2 pl-9 pr-4 text-sm text-white placeholder:text-gray-400 outline-none transition-all focus:ring-2 focus:ring-[#6366f1]"
-                style={{ background: '#1a1a1a', borderColor: '#2a2a2a' }}
-              />
+          <div className="flex flex-1 items-center gap-2 lg:hidden">
+            <div className="flex-1">
+              <GlobalSearch mobile autoFocus onClose={() => setMobileSearchOpen(false)} />
             </div>
             <button
               type="button"
-              onClick={() => { setMobileSearchOpen(false); setSearchQuery('') }}
-              className="rounded-full p-1.5 text-gray-400 hover:text-white"
+              onClick={() => setMobileSearchOpen(false)}
+              className="rounded-full p-1.5 text-gray-400 hover:text-white shrink-0"
             >
               <X className="h-4 w-4" />
             </button>
-          </form>
+          </div>
         )}
 
         {/* Desktop search */}
-        <form onSubmit={handleSearch} className="mx-auto hidden flex-1 max-w-xl lg:block">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              placeholder="Search people, marketplace, events, PYQs..."
-              className="w-full rounded-xl border py-2 pl-9 pr-4 text-sm text-white placeholder:text-gray-400 outline-none transition-all focus:ring-2 focus:ring-[#6366f1]"
-              style={{ background: '#1a1a1a', borderColor: '#2a2a2a' }}
-            />
-          </div>
-        </form>
+        <div className="mx-auto hidden flex-1 max-w-xl lg:block">
+          <GlobalSearch />
+        </div>
 
         <div className="ml-auto flex items-center gap-1">
           {/* Mobile search toggle */}
