@@ -7,9 +7,9 @@ describe('getClubImageAlt', () => {
       .toBe('A chessboard with pieces')
   })
 
-  it('returns club name + suffix when no explicit alt', () => {
+  it('returns club name when no explicit alt', () => {
     expect(getClubImageAlt('Robotics Club'))
-      .toBe('Robotics Club cover image')
+      .toBe('Robotics Club')
   })
 
   it('returns generic fallback when neither name nor alt is provided', () => {
