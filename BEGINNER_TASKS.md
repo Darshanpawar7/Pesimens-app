@@ -1,25 +1,43 @@
-# Beginner Tasks
+# 🚀 Beginner Tasks - PESIMENS App
 
-This project welcomes beginner-friendly contributions focused on public-facing UI and documentation.
+Welcome to PESIMENS! This guide helps first-time contributors find easy tasks to get started.
 
-## UI and landing page
-
-- Improve layout and responsiveness of the landing page.
-- Add small UI polish (spacing, typography, accessibility fixes).
-- Create reusable UI components in frontend/src/components.
-
-## Documentation
-
-- Fix typos, improve clarity, and add diagrams in docs.
-- Expand onboarding steps for first-time contributors.
-
-## Developer experience
-
-- Improve linting or formatting docs.
-- Add or improve README sections for the public repo.
+---
 
 ## How to start
 
 1. Pick a small task and open an issue describing it.
 2. Wait for confirmation before starting work.
 3. Submit a focused PR with screenshots for UI changes.
+
+---
+
+## 📋 Task Categories
+
+| Category | Difficulty | Estimated Time |
+|----------|------------|----------------|
+| 🎨 UI/UX | Easy | 30 min - 1 hour |
+| 📝 Documentation | Easy | 15 - 30 min |
+| 🐛 Bug Fixes | Medium | 1 - 2 hours |
+| ⚡ Performance | Medium | 1 - 2 hours |
+
+---
+
+## 🎨 UI/UX Tasks
+
+### 1. Improve Landing Page Spacing
+
+**File:** `src/pages/LandingPage.tsx` (Lines 40-80)
+
+**Current Issue:** Spacing between sections is inconsistent.
+
+**Acceptance Criteria:**
+- [ ] Consistent padding (px-8 or py-12) across all sections
+- [ ] Mobile responsive spacing
+- [ ] No horizontal overflow on small screens
+
+**How to Find:**
+```bash
+# Open the file
+code src/pages/LandingPage.tsx
+# Look for className="..." and adjust spacing
