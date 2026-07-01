@@ -10,7 +10,7 @@
 // @ts-ignore TS: allow unresolved imports in this workspace environment
 import React, { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 // @ts-ignore TS: allow unresolved imports in this workspace environment
-import { Send, X, Loader2, Copy, Check, BookmarkCheck, Sparkles } from 'lucide-react'
+import { Send, X, Loader2, Copy, Check, BookmarkCheck, Sparkles, Trash2 } from 'lucide-react'
 
 // Minimal local JSX declaration to satisfy TypeScript when React types are unavailable.
 declare global {
@@ -21,6 +21,7 @@ declare global {
   }
 }
 import { useAI, getAIErrorMessage } from '../../hooks/useAI'
+import { useAthenaHistory, useInsertAthenaHistory, useClearAthenaHistory } from '../../hooks/useAthenaHistory'
 import { useAuthStore } from '@/store/auth'
 import type { AITask, AIResponse, AthenaAnswerMode, AthenaPayload } from '../../services/aiService'
 
@@ -1048,6 +1049,24 @@ export function AIChatPanel({ taskType, context, onClose, mode = 'exam' }: AICha
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
+  const { data: history, isPending: isHistoryLoading } = useAthenaHistory(taskType as AITask)
+  const insertMessage = useInsertAthenaHistory()
+  const clearHistory = useClearAthenaHistory()
+
+  useEffect(() => {
+    if (history && history.length > 0 && messages.length === 0) {
+      setMessages(
+        history.map(msg => ({
+          role: msg.role,
+          content: msg.content,
+          provider: msg.provider || undefined,
+          athena: msg.athena_payload || undefined,
+          mode: msg.mode || undefined,
+        }))
+      )
+    }
+  }, [history])
+
   const mutation = useAI({
     onSuccess: (data: AIResponse) => {
       const normalizedResponse = normalizeAssistantResponse(data.answer, data.athena)
@@ -1061,6 +1080,15 @@ export function AIChatPanel({ taskType, context, onClose, mode = 'exam' }: AICha
           mode: data.mode ?? '4_MARKS',
         },
       ])
+
+      insertMessage.mutate({
+        task_type: taskType as AITask,
+        role: 'assistant',
+        content: normalizedResponse.content,
+        provider: data.provider,
+        athena_payload: normalizedResponse.athena,
+        mode: data.mode ?? '4_MARKS',
+      })
     },
   })
 
@@ -1150,6 +1178,13 @@ export function AIChatPanel({ taskType, context, onClose, mode = 'exam' }: AICha
 
     setMessages((prev) => [...prev, { role: 'user', content: trimmed }])
     setInput('')
+    
+    insertMessage.mutate({
+      task_type: taskType as AITask,
+      role: 'user',
+      content: trimmed,
+    })
+
     mutation.mutate({ task: taskType as AITask, prompt: trimmed, context, mode: answerMode })
   }
 
@@ -1262,13 +1297,27 @@ export function AIChatPanel({ taskType, context, onClose, mode = 'exam' }: AICha
               <p className="text-[11px] text-white/60">{mode === 'general' ? 'A calm conversational assistant' : 'Exam assistant tuned for PESU patterns'}</p>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            aria-label="Close"
-            className="flex h-9 w-9 items-center justify-center rounded-full text-white/45 transition hover:bg-white/10 hover:text-white"
-          >
-            <X className="h-4 w-4" />
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => {
+                if (window.confirm('Clear conversation history for this task?')) {
+                  clearHistory.mutate(taskType as AITask)
+                  setMessages([])
+                }
+              }}
+              title="Clear history"
+              className="flex h-9 w-9 items-center justify-center rounded-full text-white/45 transition hover:bg-white/10 hover:text-white"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+            <button
+              onClick={onClose}
+              aria-label="Close"
+              className="flex h-9 w-9 items-center justify-center rounded-full text-white/45 transition hover:bg-white/10 hover:text-white"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -1277,7 +1326,11 @@ export function AIChatPanel({ taskType, context, onClose, mode = 'exam' }: AICha
         role="log"
         aria-live="polite"
       >
-        {messages.length === 0 && (
+        {isHistoryLoading ? (
+          <div className="flex h-full items-center justify-center">
+            <Loader2 className="h-6 w-6 animate-spin text-white/40" />
+          </div>
+        ) : messages.length === 0 ? (
           <div className="rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.015))] p-4">
             <div className="flex items-start justify-between gap-3">
               <div>
@@ -1291,7 +1344,7 @@ export function AIChatPanel({ taskType, context, onClose, mode = 'exam' }: AICha
               <p className="text-sm text-white/80">Hi {profile?.display_name ? profile.display_name : 'there'}, how can I assist you today?</p>
             </div>
           </div>
-        )}
+        ) : null}
 
         {messages.map((msg, i) => {
           const recoveredAthena = msg.athena ?? (msg.role === 'assistant' ? recoverAthenaFromContent(msg.content) : null)

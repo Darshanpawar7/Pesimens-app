@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { ChevronLeft, ChevronRight, Trash2, X } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Trash2, X, Download } from 'lucide-react'
 import { apiFetch } from '../lib/api'
 import { useToast } from '../components/ui/use-toast'
+import { downloadICS, type ICS_Event } from '../lib/ics'
 
 interface BirthdayItem {
   id: string
@@ -394,6 +395,48 @@ export default function CalendarPage() {
     return () => clearInterval(timer)
   }, [upcomingTasksQuery.data?.tasks])
 
+  const handleExportICS = () => {
+    const allEvents: ICS_Event[] = []
+
+    tasks.forEach(task => {
+      allEvents.push({
+        id: task.id,
+        title: `[Task] ${task.title}`,
+        description: task.description || '',
+        date: task.due_date,
+        time: task.due_time,
+      })
+    })
+
+    exams.forEach(exam => {
+      allEvents.push({
+        id: exam.id,
+        title: `[Exam] ${exam.subject_name} ${exam.exam_type}`,
+        description: `Venue: ${exam.venue || 'TBA'}`,
+        date: exam.exam_date,
+        time: exam.exam_time,
+      })
+    })
+
+    pesuExams.forEach(exam => {
+      allEvents.push({
+        id: exam.id,
+        title: `[PESU Exam] ${exam.subject_name} ${exam.exam_type}`,
+        description: `Venue: ${exam.venue || 'TBA'}\nTime: ${exam.start_time || 'TBA'} - ${exam.end_time || 'TBA'}`,
+        date: exam.exam_date,
+        time: exam.start_time,
+      })
+    })
+
+    if (allEvents.length === 0) {
+      toast({ variant: 'info', title: 'No events to export' })
+      return
+    }
+
+    downloadICS(allEvents, `pesimens-schedule-${monthKey}.ics`)
+    toast({ variant: 'success', title: 'Calendar exported successfully' })
+  }
+
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-[#0f0f0f] px-4 py-5 text-white md:px-6">
       <div className="mx-auto max-w-7xl space-y-4">
@@ -412,18 +455,27 @@ export default function CalendarPage() {
           <section className="flex-1 space-y-4">
             <div className="rounded-2xl border border-[#2a2a2a] bg-[#111111] p-4">
               <div className="mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1))}
+                    className="rounded-lg p-2 text-indigo-300 transition hover:bg-indigo-500/20"
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                  </button>
+                  <h1 className="text-lg font-semibold">{MONTHS[currentMonth.getMonth()]} {currentMonth.getFullYear()}</h1>
+                  <button
+                    onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1))}
+                    className="rounded-lg p-2 text-indigo-300 transition hover:bg-indigo-500/20"
+                  >
+                    <ChevronRight className="h-5 w-5" />
+                  </button>
+                </div>
                 <button
-                  onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1))}
-                  className="rounded-lg p-2 text-indigo-300 transition hover:bg-indigo-500/20"
+                  onClick={handleExportICS}
+                  className="flex items-center gap-2 rounded-lg border border-indigo-500/30 bg-indigo-500/10 px-3 py-1.5 text-sm font-medium text-indigo-300 transition hover:bg-indigo-500/20"
                 >
-                  <ChevronLeft className="h-5 w-5" />
-                </button>
-                <h1 className="text-lg font-semibold">{MONTHS[currentMonth.getMonth()]} {currentMonth.getFullYear()}</h1>
-                <button
-                  onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1))}
-                  className="rounded-lg p-2 text-indigo-300 transition hover:bg-indigo-500/20"
-                >
-                  <ChevronRight className="h-5 w-5" />
+                  <Download className="h-4 w-4" />
+                  <span className="hidden sm:inline">Export (.ics)</span>
                 </button>
               </div>
 

@@ -26,7 +26,5 @@ export function getClubImageAlt(
   clubName?: string,
   explicitAlt?: string,
 ): string {
-  if (explicitAlt) return explicitAlt
-  if (clubName) return `${clubName} cover image`
-  return 'Club cover image'
+  return explicitAlt || clubName || 'Club cover image'
 }

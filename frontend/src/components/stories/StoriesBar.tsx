@@ -43,6 +43,7 @@ interface StoryItem {
     avatar_url: string | null
     viewed_at: string
   }>
+  sticker_overlay?: string | null
 }
 
 interface StoryRing {
@@ -191,6 +192,11 @@ export function StoriesBar() {
   const [photoPreviewUrl, setPhotoPreviewUrl] = useState('')
   const [uploadProgress, setUploadProgress] = useState(0)
   const [showPhotoCaption, setShowPhotoCaption] = useState(false)
+  const [expiresIn, setExpiresIn] = useState<6 | 12 | 24>(24)
+  const [selectedSticker, setSelectedSticker] = useState<string | null>(null)
+  const [showStickerPicker, setShowStickerPicker] = useState(false)
+
+  const STICKERS = ['🔥', '💯', '💀', '😭', '❤️', '🎉', '👀', '🚀']
 
   const touchStartY = useRef<number | null>(null)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
@@ -254,6 +260,8 @@ export function StoriesBar() {
       text_content?: string
       image_url?: string
       gradient_index?: number
+      expires_in_hours?: number
+      sticker_overlay?: string
     }) => apiFetch<{ story: StoryItem }>('/api/stories', {
         method: 'POST',
         body: JSON.stringify(payload),
@@ -269,6 +277,9 @@ export function StoriesBar() {
       setTextGradientIndex(0)
       setShowPhotoCaption(false)
       setUploadProgress(0)
+      setExpiresIn(24)
+      setSelectedSticker(null)
+      setShowStickerPicker(false)
       toast({ variant: 'success', title: 'Story shared! 🎉' })
     },
     onError: error => {
@@ -580,6 +591,8 @@ export function StoriesBar() {
         image_url: upload.url,
         text_content: photoCaption.trim() || undefined,
         gradient_index: textGradientIndex,
+        expires_in_hours: expiresIn,
+        sticker_overlay: selectedSticker ?? undefined,
       })
       setUploadProgress(100)
     } catch (error) {
@@ -604,6 +617,8 @@ export function StoriesBar() {
       content_type: 'text',
       text_content: textContent.trim(),
       gradient_index: textGradientIndex,
+      expires_in_hours: expiresIn,
+      sticker_overlay: selectedSticker ?? undefined,
     })
   }
 
@@ -678,6 +693,9 @@ export function StoriesBar() {
       setPhotoFile(null)
       setPhotoPreviewUrl('')
       setShowPhotoCaption(false)
+      setExpiresIn(24)
+      setSelectedSticker(null)
+      setShowStickerPicker(false)
     }
   }, [createOpen])
 
@@ -851,13 +869,48 @@ export function StoriesBar() {
                 </div>
               )}
 
-              <button
-                type="button"
-                onClick={() => setCreateOpen(false)}
-                className="absolute right-4 top-4 rounded-full bg-black/45 p-2 text-white"
-              >
-                <X className="h-5 w-5" />
-              </button>
+              <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-50">
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowStickerPicker(p => !p)}
+                    className="rounded-full bg-black/45 px-3 py-1.5 text-sm text-white hover:bg-black/60"
+                  >
+                    Stickers
+                  </button>
+                  <select
+                    value={expiresIn}
+                    onChange={(e) => setExpiresIn(Number(e.target.value) as 6 | 12 | 24)}
+                    className="rounded-full bg-black/45 px-2 py-1.5 text-sm text-white outline-none cursor-pointer"
+                  >
+                    <option value={6}>6h Expiry</option>
+                    <option value={12}>12h Expiry</option>
+                    <option value={24}>24h Expiry</option>
+                  </select>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setCreateOpen(false)}
+                  className="rounded-full bg-black/45 p-2 text-white hover:bg-black/60"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              {showStickerPicker && (
+                <div className="absolute top-16 left-4 right-4 bg-black/80 backdrop-blur-sm rounded-2xl p-4 flex flex-wrap gap-3 justify-center z-50 border border-white/10">
+                  {STICKERS.map(s => (
+                    <button key={s} type="button" onClick={() => { setSelectedSticker(s); setShowStickerPicker(false) }} className="text-3xl hover:scale-110 transition-transform">{s}</button>
+                  ))}
+                  <button type="button" onClick={() => { setSelectedSticker(null); setShowStickerPicker(false) }} className="text-sm bg-white/20 hover:bg-white/30 rounded-full px-4 py-1 text-white">Clear</button>
+                </div>
+              )}
+
+              {selectedSticker && (
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                  <span className="text-8xl drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]">{selectedSticker}</span>
+                </div>
+              )}
 
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-4">
                 <div className="flex items-center justify-between gap-2">
@@ -900,23 +953,57 @@ export function StoriesBar() {
               className="relative mx-auto flex h-[100dvh] w-full max-w-[480px] flex-col"
               style={{ background: storyGradients[textGradientIndex] }}
             >
-              <div className="flex items-center justify-between p-4">
+              <div className="flex items-center justify-between p-4 relative z-50">
                 <button
                   type="button"
                   onClick={() => setCreatorStep('choose')}
-                  className="rounded-full bg-black/35 px-3 py-1.5 text-sm"
+                  className="rounded-full bg-black/35 px-3 py-1.5 text-sm hover:bg-black/50"
                 >
                   Back
                 </button>
-                <button
-                  type="button"
-                  disabled={createMutation.isPending}
-                  onClick={() => { void shareTextStory() }}
-                  className="rounded-full bg-violet-600 px-4 py-1.5 text-sm font-semibold disabled:opacity-60"
-                >
-                  Share →
-                </button>
+                
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowStickerPicker(p => !p)}
+                    className="rounded-full bg-black/35 px-3 py-1.5 text-sm hover:bg-black/50"
+                  >
+                    Stickers
+                  </button>
+                  <select
+                    value={expiresIn}
+                    onChange={(e) => setExpiresIn(Number(e.target.value) as 6 | 12 | 24)}
+                    className="rounded-full bg-black/35 px-2 py-1.5 text-sm text-white outline-none cursor-pointer"
+                  >
+                    <option value={6} className="bg-black text-white">6h</option>
+                    <option value={12} className="bg-black text-white">12h</option>
+                    <option value={24} className="bg-black text-white">24h</option>
+                  </select>
+                  <button
+                    type="button"
+                    disabled={createMutation.isPending}
+                    onClick={() => { void shareTextStory() }}
+                    className="rounded-full bg-violet-600 px-4 py-1.5 text-sm font-semibold disabled:opacity-60 hover:bg-violet-500 transition-colors"
+                  >
+                    Share →
+                  </button>
+                </div>
               </div>
+
+              {showStickerPicker && (
+                <div className="absolute top-16 left-4 right-4 bg-black/80 backdrop-blur-sm rounded-2xl p-4 flex flex-wrap gap-3 justify-center z-50 border border-white/10">
+                  {STICKERS.map(s => (
+                    <button key={s} type="button" onClick={() => { setSelectedSticker(s); setShowStickerPicker(false) }} className="text-3xl hover:scale-110 transition-transform">{s}</button>
+                  ))}
+                  <button type="button" onClick={() => { setSelectedSticker(null); setShowStickerPicker(false) }} className="text-sm bg-white/20 hover:bg-white/30 rounded-full px-4 py-1 text-white">Clear</button>
+                </div>
+              )}
+
+              {selectedSticker && (
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                  <span className="text-8xl drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]">{selectedSticker}</span>
+                </div>
+              )}
 
               <div className="flex flex-1 items-center justify-center px-6">
                 <textarea
@@ -1060,6 +1147,12 @@ export function StoriesBar() {
                       <p className="text-2xl font-bold">{activeStory.poll_question || 'Poll Story'}</p>
                       <p className="mt-3 text-sm text-white/80">This poll can be voted from the default poll feed UI.</p>
                     </div>
+                  </div>
+                )}
+
+                {activeStory.sticker_overlay && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
+                    <span className="text-8xl drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]">{activeStory.sticker_overlay}</span>
                   </div>
                 )}
               </div>

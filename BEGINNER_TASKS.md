@@ -1,9 +1,12 @@
-# Beginner Tasks
+# 🚀 Beginner Tasks - PESIMENS App
 
-This project welcomes beginner-friendly contributions focused on public-facing UI and documentation.
+Welcome to PESIMENS! This guide helps first-time contributors find easy tasks to get started.
 
 ---
 
+ fix/mobile-nav-campus-mentors-79
+## How to start
+=======
 ## UI and Landing Page
 
 ### Task 1: Improve Landing Page Responsiveness
@@ -39,8 +42,44 @@ This project welcomes beginner-friendly contributions focused on public-facing U
   - No accessibility warnings in browser DevTools
 
 ---
+ dev
 
-## Documentation
+1. Pick a small task and open an issue describing it.
+2. Wait for confirmation before starting work.
+3. Submit a focused PR with screenshots for UI changes.
+
+ fix/mobile-nav-campus-mentors-79
+---
+
+## 📋 Task Categories
+
+| Category | Difficulty | Estimated Time |
+|----------|------------|----------------|
+| 🎨 UI/UX | Easy | 30 min - 1 hour |
+| 📝 Documentation | Easy | 15 - 30 min |
+| 🐛 Bug Fixes | Medium | 1 - 2 hours |
+| ⚡ Performance | Medium | 1 - 2 hours |
+
+---
+
+## 🎨 UI/UX Tasks
+
+### 1. Improve Landing Page Spacing
+
+**File:** `src/pages/LandingPage.tsx` (Lines 40-80)
+
+**Current Issue:** Spacing between sections is inconsistent.
+
+**Acceptance Criteria:**
+- [ ] Consistent padding (px-8 or py-12) across all sections
+- [ ] Mobile responsive spacing
+- [ ] No horizontal overflow on small screens
+
+**How to Find:**
+```bash
+# Open the file
+code src/pages/LandingPage.tsx
+# Look for className="..." and adjust spacing
 
 ### Task 5: Fix Typos and Improve Clarity
 - **File:** `docs/`, `README.md`, `CONTRIBUTING.md`
@@ -87,3 +126,4 @@ This project welcomes beginner-friendly contributions focused on public-facing U
 5. For UI changes, include **before/after screenshots** in your PR description.
 
 > **Tip:** Keep PRs small and focused — one task per PR works best!
+ dev
