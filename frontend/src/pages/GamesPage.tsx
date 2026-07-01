@@ -41,8 +41,7 @@ const GAMES: GameEntry[] = [
     description: 'Draw and guess with friends',
     icon: '🎨',
     playerCount: '3–8',
-    route: null,
-    comingSoon: true,
+    route: '/games/drawl',
   },
 ]
 
