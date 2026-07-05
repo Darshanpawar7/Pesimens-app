@@ -19,6 +19,9 @@ import {
   setPerformanceModePreference,
 } from '../lib/performanceMode'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../components/ui/tabs'
+import { DeleteAccountModal } from '../components/common/DeleteAccountModal'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/useAuth'
 
 const LOOKING_FOR_OPTIONS = ['Project Partner', 'Internship', 'Full-time Referral', 'Resume Review', 'Mock Interview', 'Study Group']
 const POPULAR_SKILLS = ['DSA', 'React', 'Node.js', 'Python', 'ML/AI', 'Flutter', 'Java', 'C++', 'System Design', 'DBMS', 'OS', 'CN', 'Data Analysis', 'UI/UX', 'Product Management']
@@ -58,9 +61,11 @@ function normalizeInstagramOrNull(value: string): string | null {
 }
 
 export default function SettingsPage() {
-  const { profile, setProfile } = useAuthStore()
+  const { profile, setProfile, clear } = useAuthStore()
   const { theme, setTheme } = useTheme()
   const { toast } = useToast()
+  const { signOut } = useAuth()
+  const navigate = useNavigate()
 
   const [bio, setBio] = useState(profile?.bio ?? '')
   const [headline, setHeadline] = useState(profile?.headline ?? '')
@@ -78,6 +83,8 @@ export default function SettingsPage() {
   const [performanceModePreference, setPerformanceMode] = useState<PerformanceModePreference>(() => getPerformanceModePreference())
   const [saving, setSaving] = useState(false)
   const [isAvatarLightboxOpen, setIsAvatarLightboxOpen] = useState(false)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false)
   const avatarInputRef = useRef<HTMLInputElement | null>(null)
 
   const resumeFileName = useMemo(() => {
@@ -207,6 +214,26 @@ export default function SettingsPage() {
     })
   }
 
+  const handleDeleteAccount = async () => {
+    setIsDeletingAccount(true)
+    try {
+      await apiFetch<{ ok: boolean }>('/api/profiles/me', { method: 'DELETE' })
+      toast({ variant: 'success', title: 'Account deleted', description: 'Your data has been removed.' })
+      await signOut()
+      clear()
+      navigate('/login', { replace: true })
+    } catch (error) {
+      toast({
+        variant: 'error',
+        title: 'Failed to delete account',
+        description: error instanceof Error ? error.message : 'Try again later or contact support.',
+      })
+    } finally {
+      setIsDeletingAccount(false)
+      setIsDeleteModalOpen(false)
+    }
+  }
+
   return (
     <div className="mx-auto max-w-3xl px-4 py-6">
       <div className="mb-3">
@@ -219,6 +246,7 @@ export default function SettingsPage() {
           <TabsTrigger value="professional">Professional Profile</TabsTrigger>
           <TabsTrigger value="appearance">Appearance</TabsTrigger>
           <TabsTrigger value="contact">Reach Out</TabsTrigger>
+          <TabsTrigger value="privacy">Privacy &amp; Account</TabsTrigger>
         </TabsList>
 
         <TabsContent value="professional" className="space-y-6">
@@ -531,7 +559,7 @@ export default function SettingsPage() {
           <div className="rounded-xl border border-[#2a2a2a] bg-[#1a1a1a] p-6">
             <p className="text-xs font-semibold uppercase tracking-widest text-white/40">We&apos;re listening</p>
             <h2 className="mt-1 text-xl font-semibold text-white">Reach out to us</h2>
-            <p className="mt-1 text-sm text-white/55">Bug reports, feature ideas, feedback, or just a hello — we read everything.</p>
+            <p className="mt-1 text-sm text-white/55">Bug reports, feature ideas, feedback, or just a hello &mdash; we read everything.</p>
           </div>
 
           <a
@@ -563,10 +591,41 @@ export default function SettingsPage() {
           </a>
 
           <div className="rounded-xl border border-dashed border-[#2a2a2a] p-4 text-center">
-            <p className="text-xs text-white/35">Response time is usually within 24–48 hours.</p>
+            <p className="text-xs text-white/35">Response time is usually within 24&ndash;48 hours.</p>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="privacy" className="space-y-6">
+          <div className="rounded-xl border border-[#2a2a2a] bg-[#1a1a1a] p-6 space-y-4">
+            <h2 className="text-base font-semibold text-white">Privacy &amp; Data</h2>
+            <p className="text-sm text-white/55">
+              Manage your data and account on PESiMENs. Deleting your account is permanent
+              and removes your profile, resume, social links, and academic details.
+            </p>
+          </div>
+
+          <div className="rounded-xl border border-red-500/40 bg-red-500/10 p-6 space-y-3">
+            <h2 className="text-base font-semibold text-red-300">Danger Zone</h2>
+            <p className="text-sm text-white/55">
+              Permanently delete your account and all associated data. This action cannot be undone.
+            </p>
+            <button
+              type="button"
+              onClick={() => setIsDeleteModalOpen(true)}
+              className="rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-2 text-sm font-semibold text-red-300 hover:bg-red-500/20"
+            >
+              Delete Account
+            </button>
           </div>
         </TabsContent>
       </Tabs>
+
+      <DeleteAccountModal
+        isOpen={isDeleteModalOpen}
+        isDeleting={isDeletingAccount}
+        onConfirm={() => void handleDeleteAccount()}
+        onCancel={() => setIsDeleteModalOpen(false)}
+      />
 
       <ImageLightbox
         isOpen={isAvatarLightboxOpen}
@@ -577,4 +636,3 @@ export default function SettingsPage() {
     </div>
   )
 }
-

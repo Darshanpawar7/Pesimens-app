@@ -2,6 +2,7 @@
  * AIChatPanel component
  *
  * Chat interface for AI interactions. Uses the useAI hook exclusively for all AI requests.
+ * Supports SSE streaming with graceful fallback to non-streaming POST.
  * Requirements: 17.1-17.9
  */
 
@@ -21,6 +22,7 @@ declare global {
   }
 }
 import { useAI, getAIErrorMessage } from '../../hooks/useAI'
+import { askAIStream } from '../../services/aiService'
 import { useAthenaHistory, useInsertAthenaHistory, useClearAthenaHistory } from '../../hooks/useAthenaHistory'
 import { useAuthStore } from '@/store/auth'
 import type { AITask, AIResponse, AthenaAnswerMode, AthenaPayload } from '../../services/aiService'
@@ -138,7 +140,6 @@ function parseListBlock(lines: string[], startIndex: number): ParsedListBlock | 
     if (listLine) {
       if (listLine.ordered !== ordered) break
 
-      // Keep indentation tight and predictable even if the model emits uneven spaces.
       const normalizedLevel = Math.max(0, Math.min(listLine.level, lastLevel + 1))
       items.push({ level: normalizedLevel, text: listLine.text })
       lastLevel = normalizedLevel
@@ -574,19 +575,11 @@ function normalizeExamRelevance(value: unknown): AthenaPayload['exam_relevance']
   const defaultReason = 'Recovered from provider payload'
 
   if (typeof value === 'string') {
-    return {
-      label: 'MEDIUM',
-      reason: value,
-      pyq_frequency: 0,
-    }
+    return { label: 'MEDIUM', reason: value, pyq_frequency: 0 }
   }
 
   if (!isRecord(value)) {
-    return {
-      label: 'MEDIUM',
-      reason: defaultReason,
-      pyq_frequency: 0,
-    }
+    return { label: 'MEDIUM', reason: defaultReason, pyq_frequency: 0 }
   }
 
   const rawLabel = asString(value.label, 'MEDIUM').toUpperCase()
@@ -606,10 +599,7 @@ function normalizeSources(value: unknown): AthenaPayload['sources'] {
 
   for (const entry of value) {
     if (typeof entry === 'string') {
-      sources.push({
-        type: 'notes',
-        title: entry,
-      })
+      sources.push({ type: 'notes', title: entry })
       continue
     }
 
@@ -644,11 +634,7 @@ function normalizeConfidence(value: unknown): AthenaPayload['confidence'] {
   }
 
   if (!isRecord(value)) {
-    return {
-      overall: 0.7,
-      numerical_verification: 'caution',
-      warnings: ['Recovered from raw JSON payload.'],
-    }
+    return { overall: 0.7, numerical_verification: 'caution', warnings: ['Recovered from raw JSON payload.'] }
   }
 
   const warnings = Array.isArray(value.warnings)
@@ -678,46 +664,34 @@ function normalizeNumerical(value: unknown): AthenaPayload['numerical'] {
   return {
     is_numerical: Boolean(value.is_numerical),
     given: Array.isArray(value.given)
-      ? value.given
-          .filter(isRecord)
-          .map((entry) => ({
-            symbol: asString(entry.symbol),
-            value: entry.value as string | number | undefined,
-            unit: asString(entry.unit) || undefined,
-            description: asString(entry.description) || undefined,
-          }))
-          .filter((entry) => Boolean(entry.symbol))
+      ? value.given.filter(isRecord).map((entry) => ({
+          symbol: asString(entry.symbol),
+          value: entry.value as string | number | undefined,
+          unit: asString(entry.unit) || undefined,
+          description: asString(entry.description) || undefined,
+        })).filter((entry) => Boolean(entry.symbol))
       : [],
     find: Array.isArray(value.find)
-      ? value.find
-          .filter(isRecord)
-          .map((entry) => ({
-            symbol: asString(entry.symbol),
-            value: entry.value as string | number | undefined,
-            unit: asString(entry.unit) || undefined,
-            description: asString(entry.description) || undefined,
-          }))
-          .filter((entry) => Boolean(entry.symbol))
+      ? value.find.filter(isRecord).map((entry) => ({
+          symbol: asString(entry.symbol),
+          value: entry.value as string | number | undefined,
+          unit: asString(entry.unit) || undefined,
+          description: asString(entry.description) || undefined,
+        })).filter((entry) => Boolean(entry.symbol))
       : [],
     formulas: Array.isArray(value.formulas)
-      ? value.formulas
-          .filter(isRecord)
-          .map((entry) => ({
-            name: asString(entry.name),
-            expression_katex: asString(entry.expression_katex),
-            reason: asString(entry.reason),
-          }))
-          .filter((entry) => Boolean(entry.name || entry.expression_katex))
+      ? value.formulas.filter(isRecord).map((entry) => ({
+          name: asString(entry.name),
+          expression_katex: asString(entry.expression_katex),
+          reason: asString(entry.reason),
+        })).filter((entry) => Boolean(entry.name || entry.expression_katex))
       : [],
     steps: Array.isArray(value.steps)
-      ? value.steps
-          .filter(isRecord)
-          .map((entry, stepIndex) => ({
-            index: typeof entry.index === 'number' ? entry.index : stepIndex + 1,
-            expression_katex: asString(entry.expression_katex),
-            result_katex: asString(entry.result_katex),
-          }))
-          .filter((entry) => Boolean(entry.expression_katex || entry.result_katex))
+      ? value.steps.filter(isRecord).map((entry, stepIndex) => ({
+          index: typeof entry.index === 'number' ? entry.index : stepIndex + 1,
+          expression_katex: asString(entry.expression_katex),
+          result_katex: asString(entry.result_katex),
+        })).filter((entry) => Boolean(entry.expression_katex || entry.result_katex))
       : [],
     final_answer: isRecord(value.final_answer)
       ? {
@@ -790,9 +764,7 @@ function polishEnglishText(text: string): string {
         || /^\|.*\|$/.test(line)
         || /^([-*_]\s*){3,}$/.test(line)
 
-      if (isMarkdownStructureLine) {
-        return line
-      }
+      if (isMarkdownStructureLine) return line
 
       for (const [pattern, replacement] of replacements) {
         line = line.replace(pattern, replacement)
@@ -829,41 +801,18 @@ function collectJsonBlocks(text: string): JsonBlock[] {
     const char = text[i]
 
     if (inString) {
-      if (escapeNext) {
-        escapeNext = false
-        continue
-      }
-
-      if (char === '\\') {
-        escapeNext = true
-        continue
-      }
-
-      if (char === '"') {
-        inString = false
-      }
+      if (escapeNext) { escapeNext = false; continue }
+      if (char === '\\') { escapeNext = true; continue }
+      if (char === '"') inString = false
       continue
     }
 
-    if (char === '"') {
-      inString = true
-      continue
-    }
-
-    if (char === '{') {
-      if (depth === 0) start = i
-      depth += 1
-      continue
-    }
-
+    if (char === '"') { inString = true; continue }
+    if (char === '{') { if (depth === 0) start = i; depth += 1; continue }
     if (char === '}' && depth > 0) {
       depth -= 1
       if (depth === 0 && start >= 0) {
-        blocks.push({
-          start,
-          end: i + 1,
-          text: text.slice(start, i + 1),
-        })
+        blocks.push({ start, end: i + 1, text: text.slice(start, i + 1) })
         start = -1
       }
     }
@@ -874,25 +823,14 @@ function collectJsonBlocks(text: string): JsonBlock[] {
 
 function extractAthenaCandidate(value: unknown): Record<string, unknown> | null {
   if (!isRecord(value)) return null
-
-  if (isRecord(value.athena)) {
-    return value.athena
-  }
-
-  if (isRecord(value.answer)) {
-    return value.answer
-  }
-
+  if (isRecord(value.athena)) return value.athena
+  if (isRecord(value.answer)) return value.answer
   if (typeof value.answer === 'string') {
     const nestedParsed = parseJsonLoose<unknown>(value.answer)
     const nestedCandidate = extractAthenaCandidate(nestedParsed)
     if (nestedCandidate) return nestedCandidate
   }
-
-  if (typeof value.title === 'string' || Array.isArray(value.sections)) {
-    return value
-  }
-
+  if (typeof value.title === 'string' || Array.isArray(value.sections)) return value
   return null
 }
 
@@ -900,24 +838,17 @@ function extractAthenaPayloadsFromContent(content: string): AthenaPayload[] {
   const payloads: AthenaPayload[] = []
   const seen = new Set<string>()
 
-  const rawCandidates = [
-    content,
-    ...collectJsonBlocks(content).map((block) => block.text),
-  ]
+  const rawCandidates = [content, ...collectJsonBlocks(content).map((block) => block.text)]
 
   for (const candidate of rawCandidates) {
     const parsed = parseJsonLoose<unknown>(candidate)
     if (!parsed) continue
-
     const athenaCandidate = extractAthenaCandidate(parsed)
     if (!athenaCandidate) continue
-
     const normalized = normalizeRecoveredAthena(athenaCandidate)
-    const signature = `${normalized.title}::${normalized.summary}::${normalized.sections.map((section) => `${section.heading}:${section.content_markdown}`).join('|')}`
-
+    const signature = `${normalized.title}::${normalized.summary}::${normalized.sections.map((s) => `${s.heading}:${s.content_markdown}`).join('|')}`
     if (seen.has(signature)) continue
     if (!normalized.summary && normalized.sections.length === 0) continue
-
     seen.add(signature)
     payloads.push(normalized)
   }
@@ -927,58 +858,38 @@ function extractAthenaPayloadsFromContent(content: string): AthenaPayload[] {
 
 function buildReadableRecoveredAnswers(payloads: AthenaPayload[], preface?: string): string {
   const parts: string[] = []
-
-  if (preface?.trim()) {
-    parts.push(polishEnglishText(preface.trim()))
-  }
-
+  if (preface?.trim()) parts.push(polishEnglishText(preface.trim()))
   payloads.forEach((payload, payloadIndex) => {
     parts.push(buildReadableRecoveredAnswer(payload))
-    if (payloadIndex < payloads.length - 1) {
-      parts.push('---')
-    }
+    if (payloadIndex < payloads.length - 1) parts.push('---')
   })
-
   return parts.join('\n\n').trim()
 }
 
 function extractPrefaceText(content: string): string {
   const blocks = collectJsonBlocks(content)
   if (blocks.length === 0) return content.trim()
-
-  const firstBlock = blocks[0]
-  return content.slice(0, firstBlock.start).trim()
+  return content.slice(0, blocks[0].start).trim()
 }
 
 function normalizeAssistantResponse(answer: string, athena?: AthenaPayload): { content: string; athena?: AthenaPayload } {
   if (athena) {
     const normalized = normalizeRecoveredAthena(athena)
-    return {
-      content: buildReadableRecoveredAnswer(normalized),
-      athena: normalized,
-    }
+    return { content: buildReadableRecoveredAnswer(normalized), athena: normalized }
   }
 
   const recoveredPayloads = extractAthenaPayloadsFromContent(answer)
 
   if (recoveredPayloads.length === 1) {
-    return {
-      content: buildReadableRecoveredAnswer(recoveredPayloads[0]),
-      athena: recoveredPayloads[0],
-    }
+    return { content: buildReadableRecoveredAnswer(recoveredPayloads[0]), athena: recoveredPayloads[0] }
   }
 
   if (recoveredPayloads.length > 1) {
-    const preface = extractPrefaceText(answer)
-    return {
-      content: buildReadableRecoveredAnswers(recoveredPayloads, preface),
-    }
+    return { content: buildReadableRecoveredAnswers(recoveredPayloads, extractPrefaceText(answer)) }
   }
 
   const recoveredFromNoise = recoverTextFromAthenaJsonNoise(answer)
-  if (recoveredFromNoise) {
-    return { content: polishEnglishText(recoveredFromNoise) }
-  }
+  if (recoveredFromNoise) return { content: polishEnglishText(recoveredFromNoise) }
 
   return { content: polishEnglishText(answer) }
 }
@@ -988,40 +899,31 @@ function sanitizeAthenaSectionContent(content: string): string {
   if (!trimmed) return ''
 
   const nestedPayloads = extractAthenaPayloadsFromContent(trimmed)
-  if (nestedPayloads.length > 0) {
-    return buildReadableRecoveredAnswers(nestedPayloads)
-  }
+  if (nestedPayloads.length > 0) return buildReadableRecoveredAnswers(nestedPayloads)
 
   const recoveredFromNoise = recoverTextFromAthenaJsonNoise(trimmed)
-  if (recoveredFromNoise) {
-    return polishEnglishText(recoveredFromNoise)
-  }
+  if (recoveredFromNoise) return polishEnglishText(recoveredFromNoise)
 
   return polishEnglishText(trimmed)
 }
 
 function buildReadableRecoveredAnswer(athena: AthenaPayload): string {
-  // Allow headings and rich formatting.
   const parts: string[] = []
-  
+
   const isTemplateSummary = /structured 4-mark response|exam-oriented structure|short, conversational answer/i.test(athena.summary)
-  if (athena.summary && !isTemplateSummary) {
-    parts.push(polishEnglishText(athena.summary))
-  }
+  if (athena.summary && !isTemplateSummary) parts.push(polishEnglishText(athena.summary))
 
   for (const section of athena.sections) {
-    if (section.heading) {
-      parts.push(`### ${section.heading}`)
-    }
+    if (section.heading) parts.push(`### ${section.heading}`)
     const cleaned = sanitizeAthenaSectionContent(section.content_markdown)
     if (cleaned) parts.push(cleaned)
   }
 
   if (athena.numerical?.is_numerical) {
-    if (athena.numerical.formulas && athena.numerical.formulas.length > 0) {
+    if (athena.numerical.formulas?.length > 0) {
       parts.push('**Formulas:**\n\n' + athena.numerical.formulas.map(f => `*${f.name}*: \`${f.expression_katex}\` - ${f.reason}`).join('\n\n'))
     }
-    if (athena.numerical.steps && athena.numerical.steps.length > 0) {
+    if (athena.numerical.steps?.length > 0) {
       parts.push('**Steps:**\n\n' + athena.numerical.steps.map(s => `**Step ${s.index}:**\n\`${s.expression_katex}\`\n\`${s.result_katex}\``).join('\n\n'))
     }
     if (athena.numerical.final_answer?.value) {
@@ -1048,6 +950,10 @@ export function AIChatPanel({ taskType, context, onClose, mode = 'exam' }: AICha
   const [isMobileViewport, setIsMobileViewport] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  // ── Streaming state ──────────────────────────────────────────────────────────
+  const [isStreaming, setIsStreaming] = useState(false)
+  const [streamingContent, setStreamingContent] = useState('')
+  const abortControllerRef = useRef<AbortController | null>(null)
 
   const { data: history, isPending: isHistoryLoading } = useAthenaHistory(taskType as AITask)
   const insertMessage = useInsertAthenaHistory()
@@ -1099,7 +1005,7 @@ export function AIChatPanel({ taskType, context, onClose, mode = 'exam' }: AICha
     if (endElement && typeof endElement.scrollIntoView === 'function') {
       endElement.scrollIntoView({ behavior: 'smooth' })
     }
-  }, [messages, mutation.isPending])
+  }, [messages, mutation.isPending, streamingContent])
 
   useEffect(() => {
     inputRef.current?.focus()
@@ -1107,11 +1013,7 @@ export function AIChatPanel({ taskType, context, onClose, mode = 'exam' }: AICha
 
   useEffect(() => {
     if (typeof window === 'undefined') return
-
-    const updateViewportType = () => {
-      setIsMobileViewport(window.matchMedia('(max-width: 767px)').matches)
-    }
-
+    const updateViewportType = () => setIsMobileViewport(window.matchMedia('(max-width: 767px)').matches)
     updateViewportType()
     window.addEventListener('resize', updateViewportType)
     return () => window.removeEventListener('resize', updateViewportType)
@@ -1119,20 +1021,26 @@ export function AIChatPanel({ taskType, context, onClose, mode = 'exam' }: AICha
 
   useEffect(() => {
     if (typeof window === 'undefined' || !window.visualViewport) return
-
     const viewport = window.visualViewport
     const updateKeyboardInset = () => {
       const inset = Math.max(0, window.innerHeight - viewport.height - viewport.offsetTop)
       setKeyboardInset(inset)
     }
-
     updateKeyboardInset()
     viewport.addEventListener('resize', updateKeyboardInset)
     viewport.addEventListener('scroll', updateKeyboardInset)
-
     return () => {
       viewport.removeEventListener('resize', updateKeyboardInset)
       viewport.removeEventListener('scroll', updateKeyboardInset)
+    }
+  }, [])
+
+  // Cleanup stream on unmount
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort()
+      }
     }
   }, [])
 
@@ -1174,18 +1082,56 @@ export function AIChatPanel({ taskType, context, onClose, mode = 'exam' }: AICha
 
   const submitPrompt = (text: string) => {
     const trimmed = text.trim()
-    if (!trimmed || mutation.isPending) return
+    if (!trimmed || mutation.isPending || isStreaming) return
+
+    // Cancel any in-flight stream before starting a new one
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort()
+      abortControllerRef.current = null
+    }
 
     setMessages((prev) => [...prev, { role: 'user', content: trimmed }])
     setInput('')
-    
-    insertMessage.mutate({
-      task_type: taskType as AITask,
-      role: 'user',
-      content: trimmed,
-    })
+    setStreamingContent('')
+    setIsStreaming(true)
 
-    mutation.mutate({ task: taskType as AITask, prompt: trimmed, context, mode: answerMode })
+    const controller = new AbortController()
+    abortControllerRef.current = controller
+    let accumulated = ''
+
+    askAIStream(
+      taskType as AITask,
+      trimmed,
+      context,
+      answerMode,
+      (chunk) => {
+        accumulated += chunk
+        setStreamingContent(accumulated)
+      },
+      (fullText) => {
+        setIsStreaming(false)
+        setStreamingContent('')
+        abortControllerRef.current = null
+        const normalizedResponse = normalizeAssistantResponse(fullText)
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: 'assistant',
+            content: normalizedResponse.content,
+            athena: normalizedResponse.athena,
+            mode: answerMode,
+          },
+        ])
+      },
+      (_error) => {
+        setIsStreaming(false)
+        setStreamingContent('')
+        abortControllerRef.current = null
+        // Fall back to non-streaming mutation on stream error
+        mutation.mutate({ task: taskType as AITask, prompt: trimmed, context, mode: answerMode })
+      },
+      controller.signal
+    )
   }
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -1223,14 +1169,12 @@ export function AIChatPanel({ taskType, context, onClose, mode = 'exam' }: AICha
     } catch {
       return false
     }
-
     return false
   }
 
   const handleCopyMessage = async (content: string, messageIndex: number) => {
     const copied = await copyText(content)
     if (!copied) return
-
     setCopiedMessageIndex(messageIndex)
     window.setTimeout(() => setCopiedMessageIndex((prev) => (prev === messageIndex ? null : prev)), 1600)
   }
@@ -1238,7 +1182,6 @@ export function AIChatPanel({ taskType, context, onClose, mode = 'exam' }: AICha
   const handleCopyCode = async (code: string, codeKey: string) => {
     const copied = await copyText(code)
     if (!copied) return
-
     setCopiedCodeKey(codeKey)
     window.setTimeout(() => setCopiedCodeKey((prev) => (prev === codeKey ? null : prev)), 1600)
   }
@@ -1267,6 +1210,7 @@ export function AIChatPanel({ taskType, context, onClose, mode = 'exam' }: AICha
 
   const errorMessage = getAIErrorMessage(mutation.error)
   const mobileLift = isMobileViewport ? Math.max(0, keyboardInset) : 0
+  const isResponding = isStreaming || mutation.isPending
 
   return (
     <div className="relative grid h-[min(640px,86vh)] w-full grid-rows-[auto_minmax(0,1fr)_auto] overflow-hidden rounded-t-2xl border border-white/10 bg-[#050505] shadow-[0_28px_90px_rgba(0,0,0,0.75)] sm:h-[min(680px,88vh)] md:rounded-2xl md:h-[min(760px,88vh)]"
@@ -1350,49 +1294,62 @@ export function AIChatPanel({ taskType, context, onClose, mode = 'exam' }: AICha
           const recoveredAthena = msg.athena ?? (msg.role === 'assistant' ? recoverAthenaFromContent(msg.content) : null)
 
           return (
-          <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div
-              className={`max-w-[92%] md:max-w-[90%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed shadow-[0_6px_22px_rgba(0,0,0,0.2)] ${
-                msg.role === 'user'
-                  ? 'bg-white text-black border border-white/20'
-                  : 'ai-assistant-response-surface text-white/92 border border-white/12'
-              }`}
-            >
-              {msg.role === 'assistant' ? (
-                // Present assistant responses as plain flowing prose (Claude-like).
-                <div className="ai-assistant-prose break-words">
-                  {renderAssistantContent(msg.content, i, handleCopyCode, copiedCodeKey)}
-                </div>
-              ) : (
-                <p className="whitespace-pre-wrap break-words">{msg.content}</p>
-              )}
+            <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div
+                className={`max-w-[92%] md:max-w-[90%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed shadow-[0_6px_22px_rgba(0,0,0,0.2)] ${
+                  msg.role === 'user'
+                    ? 'bg-white text-black border border-white/20'
+                    : 'ai-assistant-response-surface text-white/92 border border-white/12'
+                }`}
+              >
+                {msg.role === 'assistant' ? (
+                  <div className="ai-assistant-prose break-words">
+                    {renderAssistantContent(msg.content, i, handleCopyCode, copiedCodeKey)}
+                  </div>
+                ) : (
+                  <p className="whitespace-pre-wrap break-words">{msg.content}</p>
+                )}
 
-              {msg.role === 'assistant' && (
-                <div className="mt-2 flex flex-wrap items-center gap-2">
-                  <button type="button" onClick={() => handleCopyMessage(msg.content, i)} className="ai-copy-button" aria-label="Copy full message">
-                    {copiedMessageIndex === i ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
-                    <span>{copiedMessageIndex === i ? 'Copied' : 'Copy message'}</span>
-                  </button>
-
-                  {mode === 'exam' && (
-                    <button type="button" onClick={() => handleSaveAnswer(msg, i)} className="ai-copy-button" aria-label="Save to notes">
-                      {savedMessageIndex === i ? <Check className="h-3.5 w-3.5" /> : <BookmarkCheck className="h-3.5 w-3.5" />}
-                      <span>{savedMessageIndex === i ? 'Saved' : 'Save to My Notes'}</span>
+                {msg.role === 'assistant' && (
+                  <div className="mt-2 flex flex-wrap items-center gap-2">
+                    <button type="button" onClick={() => handleCopyMessage(msg.content, i)} className="ai-copy-button" aria-label="Copy full message">
+                      {copiedMessageIndex === i ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                      <span>{copiedMessageIndex === i ? 'Copied' : 'Copy message'}</span>
                     </button>
-                  )}
 
-                  <span className="inline-flex items-center gap-1 rounded-full border border-white/12 bg-white/5 px-2 py-0.5 text-[10px] font-medium text-white/78" data-testid="provider-badge">
-                    <img src="/athena-ai-logo-v2.jpeg" alt="Athena" className="h-3 w-3 rounded-full object-cover" />
-                    Athena
-                  </span>
-                </div>
-              )}
+                    {mode === 'exam' && (
+                      <button type="button" onClick={() => handleSaveAnswer(msg, i)} className="ai-copy-button" aria-label="Save to notes">
+                        {savedMessageIndex === i ? <Check className="h-3.5 w-3.5" /> : <BookmarkCheck className="h-3.5 w-3.5" />}
+                        <span>{savedMessageIndex === i ? 'Saved' : 'Save to My Notes'}</span>
+                      </button>
+                    )}
+
+                    <span className="inline-flex items-center gap-1 rounded-full border border-white/12 bg-white/5 px-2 py-0.5 text-[10px] font-medium text-white/78" data-testid="provider-badge">
+                      <img src="/athena-ai-logo-v2.jpeg" alt="Athena" className="h-3 w-3 rounded-full object-cover" />
+                      Athena
+                    </span>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
           )
         })}
 
-        {mutation.isPending && (
+        {/* Live streaming bubble — shows text as it arrives token by token */}
+        {isStreaming && streamingContent && (
+          <div className="flex justify-start" aria-live="polite" aria-label="Athena is responding">
+            <div className="ai-assistant-response-surface max-w-[92%] md:max-w-[90%] rounded-2xl border border-white/12 px-3.5 py-2.5 text-sm text-white/92 shadow-[0_6px_22px_rgba(0,0,0,0.2)]">
+              <div className="ai-assistant-prose break-words">
+                {renderAssistantContent(streamingContent, -1, handleCopyCode, null)}
+              </div>
+              {/* Blinking cursor */}
+              <span className="ml-0.5 inline-block h-3.5 w-0.5 animate-pulse bg-white/70 align-middle" aria-hidden="true" />
+            </div>
+          </div>
+        )}
+
+        {/* Spinner — shown while waiting for first chunk or during non-streaming fallback */}
+        {(mutation.isPending || (isStreaming && !streamingContent)) && (
           <div className="flex justify-start" data-testid="loading-indicator" aria-label="Loading">
             <div className="flex items-center gap-2 rounded-2xl border border-white/12 bg-white/[0.04] px-3 py-2">
               <Loader2 className="h-3.5 w-3.5 animate-spin text-white/70" />
@@ -1421,7 +1378,7 @@ export function AIChatPanel({ taskType, context, onClose, mode = 'exam' }: AICha
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Ask Athena anything about your syllabus..."
-              disabled={mutation.isPending}
+              disabled={isResponding}
               aria-label="Message input"
               className="min-w-0 flex-1 bg-transparent text-sm text-white placeholder-white/35 outline-none disabled:opacity-50"
               style={{ fontSize: '16px' }}
@@ -1429,11 +1386,11 @@ export function AIChatPanel({ taskType, context, onClose, mode = 'exam' }: AICha
           </div>
           <button
             type="submit"
-            disabled={mutation.isPending || !input.trim()}
+            disabled={isResponding || !input.trim()}
             aria-label="Send"
             className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl border border-white/12 bg-white text-black transition hover:bg-white/90 disabled:opacity-40"
           >
-            {mutation.isPending
+            {isResponding
               ? <Loader2 className="h-4 w-4 animate-spin" />
               : <Send className="h-4 w-4" />
             }
