@@ -1,17 +1,71 @@
+ fix/landing-page-ui
+name: Auto-assign PRs and issues
+
+on:
+  pull_request:
+    types: [opened, ready_for_review]
+  issues:
+    types: [opened]
+
 name: Auto Assign Issue
 
 on:
+ dev
   issue_comment:
     types: [created]
 
 permissions:
+fix/landing-page-ui
+  pull-requests: write
+  issues: write
+  contents: read
+
   issues: write
   pull-requests: write
+ dev
 
 jobs:
   auto-assign:
     runs-on: ubuntu-latest
     steps:
+ fix/landing-page-ui
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const repo = { owner: context.repo.owner, repo: context.repo.repo };
+
+            if (context.payload.pull_request) {
+              const pr = context.payload.pull_request;
+              if (pr.user.login !== context.repo.owner) {
+                await github.rest.issues.addAssignees({ ...repo, issue_number: pr.number, assignees: [pr.user.login] });
+              }
+              const { data: labels } = await github.rest.issues.listLabelsOnIssue({ ...repo, issue_number: pr.number });
+              if (!labels.find(l => l.name === 'gssoc:approved')) {
+                await github.rest.issues.addLabels({ ...repo, issue_number: pr.number, labels: ['gssoc:approved'] });
+              }
+              await github.rest.issues.createComment({ ...repo, issue_number: pr.number, body: 'Welcome! Your PR has been auto-assigned. A maintainer will review it shortly.' });
+            }
+
+            if (context.payload.issue && !context.payload.comment) {
+              const body = context.payload.issue.body || '';
+              const title = context.payload.issue.title || '';
+              const assignTriggers = ['i would like to work', 'assign me', '/assign'];
+              if (assignTriggers.some(t => body.toLowerCase().includes(t) || title.toLowerCase().includes(t))) {
+                await github.rest.issues.addAssignees({ ...repo, issue_number: context.payload.issue.number, assignees: [context.payload.issue.user.login] });
+              }
+            }
+
+            if (context.payload.comment) {
+              const comment = context.payload.comment;
+              const assignTriggers = ['i would like to work', 'assign me', '/assign'];
+              if (assignTriggers.some(t => comment.body.toLowerCase().includes(t))) {
+                const { data: issue } = await github.rest.issues.get({ ...repo, issue_number: context.payload.issue.number });
+                if (!issue.assignee) {
+                  await github.rest.issues.addAssignees({ ...repo, issue_number: context.payload.issue.number, assignees: [comment.user.login] });
+                }
+              }
+            }
+
       - name: Auto-assign issue to commenter
         uses: actions/github-script@v7
         with:
@@ -85,3 +139,4 @@ jobs:
               issue_number: issue.number,
               body: `Hi @${commenter}, this issue has been successfully assigned to you! 🎉\n\nMake sure to read our [Contributing Guidelines](CONTRIBUTING.md) and submit your PR within the GSSoC timeframe. Happy coding! 🚀`
             });
+dev

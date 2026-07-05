@@ -66,9 +66,9 @@ describe('ClubCard — cover image alt text', () => {
 
     render(<ClubCard club={club} />)
 
-    const img = screen.getByRole('img', { name: 'Robotics Club cover image' })
+    const img = screen.getByRole('img', { name: 'Robotics Club' })
     expect(img).toBeTruthy()
-    expect(img.getAttribute('alt')).toBe('Robotics Club cover image')
+    expect(img.getAttribute('alt')).toBe('Robotics Club')
   })
 
   it('uses explicit cover_image_alt when provided', () => {
@@ -102,7 +102,7 @@ describe('ClubCard — cover image alt text', () => {
 
     render(<ClubCard club={club} compact />)
 
-    const coverImg = screen.queryByRole('img', { name: 'Robotics Club cover image' })
+    const coverImg = screen.queryByRole('img', { name: 'Robotics Club' })
     expect(coverImg).toBeNull()
   })
 })
