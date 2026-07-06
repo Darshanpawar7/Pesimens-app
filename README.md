@@ -487,3 +487,4 @@ This public repo intentionally excludes:
 <p align="center">
   Built for PES University students with a strong focus on product quality, privacy, and security.
 </p>
+# TODO: feat: implement chess leaderboard and per-user stats (phase 2) (#11)
