@@ -487,3 +487,4 @@ This public repo intentionally excludes:
 <p align="center">
   Built for PES University students with a strong focus on product quality, privacy, and security.
 </p>
+# TODO: perf: add optimistic updates to confessions voting and pyq upvote/bookmark mutations (#30)
