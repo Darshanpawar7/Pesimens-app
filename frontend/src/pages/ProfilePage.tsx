@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ImageLightbox } from '@/components/common/ImageLightbox'
 import { ExternalLink, Github, Globe, Instagram, Link2, Plus, Star, Trash2, Upload } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { PersonSkeleton } from '@/components/ui/skeleton'
 import { DetailBackButton } from '@/components/common/DetailBackButton'
 import { KarmaBadge } from '@/components/common/KarmaBadge'
 import { StreakBadge } from '@/components/common/StreakBadge'
@@ -327,11 +328,17 @@ export default function ProfilePage() {
     void queryClient.invalidateQueries({ queryKey: ['profile-followers', viewedProfileId] })
     void queryClient.invalidateQueries({ queryKey: ['profile-following', viewedProfileId] })
   }
-
   if (!viewedProfile) {
-    return <div className="p-6 text-white">Loading profile...</div>
-  }
-
+  return (
+    <div className="mx-auto max-w-2xl px-4 py-6">
+      <div className="mb-3 h-8 w-24 rounded-lg bg-[#2a2a2a] animate-pulse" />
+      <PersonSkeleton />
+      <PersonSkeleton />
+      <PersonSkeleton />
+    </div>
+  )
+}
+  
   const links = {
     linkedin: viewedProfile.linkedin_url,
     instagram: viewedProfile.instagram_url,
