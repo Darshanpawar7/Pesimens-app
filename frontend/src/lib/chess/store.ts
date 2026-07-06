@@ -401,50 +401,96 @@ export const useChessStore = create<IChessStore>((set, get) => {
       // Keep a local non-random fallback for medium/hard so play quality does
       // not collapse when cloud-eval is unavailable.
       const fallbackMove = pickBestFallbackMove(chess, difficulty)
-        ?? moves[Math.floor(Math.random() * moves.length)]
+  ?? moves[Math.floor(Math.random() * moves.length)]
 
-      let from: string = fallbackMove.from
-      let to: string = fallbackMove.to
-      let promotion: string | undefined = fallbackMove.promotion
+let from: string = fallbackMove.from
+let to: string = fallbackMove.to
+let promotion: string | undefined = fallbackMove.promotion
 
-      // On medium/hard, try to improve with Lichess cloud eval
-      const useApi =
-        difficulty === 'hard' ||
-        (difficulty === 'medium' && Math.random() < 0.6)
+// Map difficulty to Stockfish search depth
+const depthMap: Record<string, number> = { easy: 3, medium: 8, hard: 15 }
+const searchDepth = depthMap[difficulty] ?? 8
 
-      const now = Date.now()
-      const canUseApiNow = now >= cloudEvalBackoffUntil
+// Try Stockfish WASM worker first
+const stockfishMoveResult = await new Promise<string | null>((resolve) => {
+  try {
+    const worker = new Worker(
+      new URL('../workers/stockfish.worker.ts', import.meta.url),
+      { type: 'module' }
+    )
+    const timeout = setTimeout(() => {
+      worker.terminate()
+      resolve(null)
+    }, 5000)
 
-      if (useApi && canUseApiNow) {
-        try {
-          const response = await apiFetch<{ ok: boolean; data?: any }>(
-            `/api/chess/cloud-eval?fen=${encodeURIComponent(fen)}&multiPv=1`
-          )
-          const data = response?.data
-          if (data) {
-            const movesStr: string | undefined = data?.pvs?.[0]?.moves
-            if (movesStr) {
-              const firstMove = movesStr.split(' ')[0]
-              if (firstMove && firstMove.length >= 4) {
-                from = firstMove.slice(0, 2)
-                to = firstMove.slice(2, 4)
-                promotion = firstMove[4] || undefined
-              }
-            }
+    worker.postMessage({ type: 'init' })
+    worker.postMessage({ type: 'getMove', fen, depth: searchDepth })
+
+    worker.onmessage = (e: MessageEvent) => {
+      if (e.data.type === 'move') {
+        clearTimeout(timeout)
+        worker.terminate()
+        resolve(e.data.move)
+      } else if (e.data.type === 'error') {
+        clearTimeout(timeout)
+        worker.terminate()
+        resolve(null)
+      }
+    }
+
+    worker.onerror = () => {
+      clearTimeout(timeout)
+      worker.terminate()
+      resolve(null)
+    }
+  } catch {
+    resolve(null)
+  }
+})
+
+if (stockfishMoveResult && stockfishMoveResult.length >= 4) {
+  from = stockfishMoveResult.slice(0, 2)
+  to = stockfishMoveResult.slice(2, 4)
+  promotion = stockfishMoveResult[4] || undefined
+} else {
+  // Stockfish failed — try Lichess cloud eval on medium/hard
+  const useApi =
+    difficulty === 'hard' ||
+    (difficulty === 'medium' && Math.random() < 0.6)
+
+  const now = Date.now()
+  const canUseApiNow = now >= cloudEvalBackoffUntil
+
+  if (useApi && canUseApiNow) {
+    try {
+      const response = await apiFetch<{ ok: boolean; data?: any }>(
+        `/api/chess/cloud-eval?fen=${encodeURIComponent(fen)}&multiPv=1`
+      )
+      const data = response?.data
+      if (data) {
+        const movesStr: string | undefined = data?.pvs?.[0]?.moves
+        if (movesStr) {
+          const firstMove = movesStr.split(' ')[0]
+          if (firstMove && firstMove.length >= 4) {
+            from = firstMove.slice(0, 2)
+            to = firstMove.slice(2, 4)
+            promotion = firstMove[4] || undefined
           }
-        } catch (error) {
-          if (error instanceof ApiError) {
-            if (error.status === 429) {
-              cloudEvalBackoffUntil = Date.now() + CLOUD_EVAL_RATE_LIMIT_COOLDOWN_MS
-            } else if (error.status === 404) {
-              cloudEvalBackoffUntil = Date.now() + CLOUD_EVAL_NOT_FOUND_COOLDOWN_MS
-            }
-          }
-          // API unavailable or timed out — use local fallback move already set above
         }
       }
+    } catch (error) {
+      if (error instanceof ApiError) {
+        if (error.status === 429) {
+          cloudEvalBackoffUntil = Date.now() + CLOUD_EVAL_RATE_LIMIT_COOLDOWN_MS
+        } else if (error.status === 404) {
+          cloudEvalBackoffUntil = Date.now() + CLOUD_EVAL_NOT_FOUND_COOLDOWN_MS
+        }
+      }
+    }
+  }
+}
 
-      get().executeMove(from, to, promotion, true)
+get().executeMove(from, to, promotion, true)
     },
 
     // ── Reset game ────────────────────────────────────────────────────────────

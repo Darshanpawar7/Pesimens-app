@@ -125,7 +125,10 @@ function App() {
                     <Route path="/games/chess" element={<ProtectedRoute><Suspense fallback={<PageLoader />}><ChessPage /></Suspense></ProtectedRoute>} />
                     <Route path="/games/bluff" element={<Suspense fallback={<PageLoader />}><PESBluffPage /></Suspense>} />
                     <Route path="/games/drawl" element={<Suspense fallback={<PageLoader />}><PESDrawlPage /></Suspense>} />
+ fix/mobile-nav-campus-mentors-79
+
                     <Route path="/advisor" element={<Suspense fallback={<PageLoader />}><AcademicAdvisorPage /></Suspense>} />
+ dev
                   </Route>
 
                   <Route path="*" element={<Suspense fallback={<PageLoader />}><NotFoundPage /></Suspense>} />
