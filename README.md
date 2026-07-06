@@ -487,3 +487,4 @@ This public repo intentionally excludes:
 <p align="center">
   Built for PES University students with a strong focus on product quality, privacy, and security.
 </p>
+# TODO: feat: expand pwa service worker caching to cover home feed, events, confessions, and notifications (#26)
