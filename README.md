@@ -487,3 +487,4 @@ This public repo intentionally excludes:
 <p align="center">
   Built for PES University students with a strong focus on product quality, privacy, and security.
 </p>
+# TODO: docs: expand quick_start_guide.md with troubleshooting, mocked data, and environment notes (#13)
