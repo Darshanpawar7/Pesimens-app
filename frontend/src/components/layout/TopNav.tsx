@@ -9,6 +9,7 @@ export function TopNav() {
 
   return (
     <header
+      role="banner"
       className="sticky top-0 z-30 border-b mobile-glass-panel"
       style={{
         background: '#111111',
@@ -19,9 +20,9 @@ export function TopNav() {
       <div className="flex h-14 items-center gap-3 px-4">
         {/* Mobile logo */}
         {!mobileSearchOpen && (
-          <span className="lg:hidden inline-flex items-center gap-2 font-semibold tracking-tight text-white">
+          <span className="lg:hidden inline-flex items-center gap-2 font-semibold tracking-tight text-white select-none">
             <img src="/app-logo.jpeg" alt="PESimens logo" className="h-6 w-6 rounded-full object-cover" />
-            PESimens <span className="text-[#6366f1]">•</span>
+            PESimens <span className="text-[#6366f1]" aria-hidden="true">•</span>
           </span>
         )}
 
@@ -34,7 +35,8 @@ export function TopNav() {
             <button
               type="button"
               onClick={() => setMobileSearchOpen(false)}
-              className="rounded-full p-1.5 text-gray-400 hover:text-white shrink-0"
+              className="rounded-full p-1.5 text-gray-400 hover:text-white shrink-0 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+              aria-label="Close search"
             >
               <X className="h-4 w-4" />
             </button>
@@ -52,8 +54,9 @@ export function TopNav() {
             <button
               type="button"
               onClick={() => setMobileSearchOpen(true)}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full text-gray-400 hover:text-white lg:hidden"
-              aria-label="Search"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full text-gray-400 hover:text-white lg:hidden transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+              aria-label="Open search"
+              aria-expanded={mobileSearchOpen}
             >
               <Search className="h-4 w-4" />
             </button>
