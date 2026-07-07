@@ -5,22 +5,8 @@
  * Supports SSE streaming with graceful fallback to non-streaming POST.
  * Requirements: 17.1-17.9
  */
-
-// @ts-nocheck
-
-// @ts-ignore TS: allow unresolved imports in this workspace environment
-import React, { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
-// @ts-ignore TS: allow unresolved imports in this workspace environment
+import { useEffect, useMemo, useRef, useState, type ReactNode, type FormEvent, type KeyboardEvent as ReactKeyboardEvent } from 'react'
 import { Send, X, Loader2, Copy, Check, BookmarkCheck, Sparkles, Trash2 } from 'lucide-react'
-
-// Minimal local JSX declaration to satisfy TypeScript when React types are unavailable.
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      [elemName: string]: any
-    }
-  }
-}
 import { useAI, getAIErrorMessage } from '../../hooks/useAI'
 import { askAIStream } from '../../services/aiService'
 import { useAthenaHistory, useInsertAthenaHistory, useClearAthenaHistory } from '../../hooks/useAthenaHistory'
@@ -1134,15 +1120,15 @@ export function AIChatPanel({ taskType, context, onClose, mode = 'exam' }: AICha
     )
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
     submitPrompt(input)
   }
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (e: ReactKeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
-      handleSubmit(e as unknown as React.FormEvent)
+      handleSubmit(e as unknown as FormEvent)
     }
   }
 
