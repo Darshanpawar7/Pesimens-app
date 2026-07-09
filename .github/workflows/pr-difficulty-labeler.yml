@@ -1,0 +1,74 @@
+name: PR Difficulty Labeler
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  label-difficulty:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Apply difficulty label
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const THRESHOLDS = {
+              intermediate: { files: 6, changes: 80 },
+              advanced: { files: 15, changes: 300 },
+              critical: { files: 25, changes: 600 },
+            };
+
+            const pr = context.payload.pull_request;
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr.number,
+              per_page: 100,
+            });
+
+            const fileCount = files.length;
+            const changeCount = (pr.additions || 0) + (pr.deletions || 0);
+            const touchedCore = files.some((file) =>
+              /^(frontend\/src\/|backend\/|\.github\/workflows\/|frontend\/package\.json|package\.json)/i.test(file.filename)
+            );
+
+            let targetLabel = 'level:beginner';
+            if (touchedCore && (changeCount > THRESHOLDS.critical.changes || fileCount > THRESHOLDS.critical.files)) {
+              targetLabel = 'level:critical';
+            } else if (changeCount > THRESHOLDS.advanced.changes || fileCount > THRESHOLDS.advanced.files) {
+              targetLabel = 'level:advanced';
+            } else if (changeCount > THRESHOLDS.intermediate.changes || fileCount > THRESHOLDS.intermediate.files) {
+              targetLabel = 'level:intermediate';
+            }
+
+            const existingLevelLabels = (pr.labels || [])
+              .map((label) => label.name)
+              .filter((name) => typeof name === 'string' && name.toLowerCase().startsWith('level:'));
+
+            for (const label of existingLevelLabels) {
+              try {
+                await github.rest.issues.removeLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: pr.number,
+                  name: label,
+                });
+              } catch (error) {
+                console.log(`Skipping label removal for ${label}: ${error.message}`);
+              }
+            }
+
+            try {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                labels: [targetLabel],
+              });
+            } catch (error) {
+              console.log(`Skipping missing difficulty label ${targetLabel}: ${error.message}`);
+            }

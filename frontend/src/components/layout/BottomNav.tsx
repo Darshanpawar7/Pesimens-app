@@ -17,12 +17,15 @@ const moreSheetItems = [
   { to: '/timetable', emoji: '🗓', label: 'Timetable' },
   { to: '/notes', emoji: '📝', label: 'Notes' },
   { to: '/marketplace', emoji: '🛒', label: 'Marketplace' },
+  // ✅ ADD THESE TWO LINES
+  { to: '/campus', emoji: '🏫', label: 'Campus' },
+  { to: '/mentors', emoji: '🎓', label: 'Mentors' },
+  // ✅ ADDED
   { to: '/contact', emoji: '🛟', label: 'Report/Contact' },
   { to: '/messages', emoji: '💬', label: 'Messages' },
   { to: '/people', emoji: '👥', label: 'People' },
   { to: '/placements', emoji: '💼', label: 'Placements' },
 ]
-
 interface BottomNavProps {
   visible?: boolean
 }

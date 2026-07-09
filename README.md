@@ -424,15 +424,6 @@ Security issues should be reported through the maintainer contact listed above o
 - Example configuration files are only templates.
 - Uploaded files, logs, and build outputs should remain outside version control.
 
-If you want to publish a privacy policy, it should explain:
-
-- what user data is collected
-- why it is collected
-- where it is stored
-- how long it is retained
-- who can access it
-- how users can request deletion or support
-
 ---
 
 ## ❓ FAQ

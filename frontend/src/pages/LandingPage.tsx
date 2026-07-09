@@ -128,7 +128,7 @@ export default function LandingPage() {
 
         <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-7xl flex-1 flex-col items-center justify-center px-4 sm:px-6 lg:px-8 pb-16 pt-32 text-center">
           <span className="inline-flex items-center rounded-full border border-[#6366f1]/45 bg-[#1a1a1a] px-4 py-1.5 text-xs font-semibold tracking-wide text-white/90">
-            🎓 Built for PESU students
+            <span aria-hidden="true">🎓</span> Built for PESU students
           </span>
 
           <h1 className="mt-6 text-3xl font-semibold leading-tight tracking-tight sm:text-4xl md:text-5xl lg:text-6xl">
@@ -143,9 +143,14 @@ export default function LandingPage() {
           <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
             <Link
               to="/signup"
+docs/add-historical-changelog
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] px-4 py-3 text-sm font-semibold text-white shadow-[0_20px_60px_-30px_rgba(99,102,241,0.95)] transition-transform hover:-translate-y-0.5 sm:px-6"
+
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] px-6 py-3 text-sm font-semibold text-white shadow-[0_20px_60px_-30px_rgba(99,102,241,0.95)] transition-transform hover:-translate-y-0.5"
+              aria-label="Sign up for free and get started"
+ main
             >
-              Get Started Free <ArrowRight className="h-4 w-4" />
+              Get Started Free <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
             <Link
               to="/pyqs"
@@ -159,9 +164,9 @@ export default function LandingPage() {
             type="button"
             onClick={() => window.scrollTo({ top: window.innerHeight * 0.95, behavior: 'smooth' })}
             className="scroll-arrow absolute bottom-8 left-1/2 -translate-x-1/2 rounded-full border border-[#2a2a2a] bg-[#1a1a1a]/75 p-2 text-white/75 hover:text-white"
-            aria-label="Scroll down"
+            aria-label="Scroll down to see more content"
           >
-            <ChevronDown className="h-4 w-4" />
+            <ChevronDown className="h-4 w-4" aria-hidden="true" />
           </button>
         </div>
       </section>
@@ -194,7 +199,7 @@ export default function LandingPage() {
               >
                 <div className="flex items-start gap-4">
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#6366f1]/20 text-xl">
-                    {card.icon}
+                    <span aria-hidden="true">{card.icon}</span>
                   </div>
                   <div className="min-w-0 border-l-2 border-l-[#6366f1] pl-4">
                     <h3 className="text-lg font-semibold text-white">{card.title}</h3>
@@ -218,8 +223,13 @@ export default function LandingPage() {
             margin: '0 auto',
             maxWidth: '700px'
           }}>
+docs/add-historical-changelog
             <div style={{fontSize: '3rem', marginBottom: '1rem'}}>🤫</div>
             <h2 style={{fontSize: '1.5rem', fontWeight: 700, color: 'white', marginBottom: '0.75rem'}}>
+
+            <div style={{fontSize: '3rem', marginBottom: '1rem'}} aria-hidden="true">🤫</div>
+            <h2 style={{fontSize: '1.75rem', fontWeight: 700, color: 'white', marginBottom: '0.75rem'}}>
+ main
               Anonymous Confessions
             </h2>
             <p style={{color: '#9ca3af', marginBottom: '2rem', fontSize: '1rem'}}>
@@ -242,26 +252,45 @@ export default function LandingPage() {
         </div>
       </section>
 
+docs/add-historical-changelog
       <section className="border-b border-[#2a2a2a] py-12 sm:py-16 md:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-center text-2xl font-semibold tracking-tight sm:text-3xl md:text-4xl">How it works</h2>
           <div className="mt-10 grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2 lg:grid-cols-3">
             <article className="rounded-2xl border border-[#2a2a2a] bg-[#1a1a1a] p-6 text-center sm:p-8">
               <div className="text-[3rem] leading-none">🔐</div>
+
+      <section className="border-b border-[#2a2a2a] py-16 sm:py-20">
+        <div className="mx-auto max-w-6xl px-4">
+          <h2 className="text-center text-3xl font-semibold tracking-tight sm:text-4xl">How it works</h2>
+          <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-3">
+            <article className="rounded-2xl border border-[#2a2a2a] bg-[#1a1a1a] p-8 text-center">
+              <div className="text-[3rem] leading-none" aria-hidden="true">🔐</div>
+main
               <p className="text-sm font-semibold uppercase tracking-wide text-[#6366f1]">Step 1</p>
               <h3 className="mt-2 text-lg font-semibold">Sign up with your SRN</h3>
               <p className="mt-2 text-sm text-white/65">Just your SRN — no email needed</p>
             </article>
 
+ docs/add-historical-changelog
             <article className="rounded-2xl border border-[#2a2a2a] bg-[#1a1a1a] p-6 text-center sm:p-8">
               <div className="text-[3rem] leading-none">📚</div>
+
+            <article className="rounded-2xl border border-[#2a2a2a] bg-[#1a1a1a] p-8 text-center">
+              <div className="text-[3rem] leading-none" aria-hidden="true">📚</div>
+main
               <p className="text-sm font-semibold uppercase tracking-wide text-[#6366f1]">Step 2</p>
               <h3 className="mt-2 text-lg font-semibold">Upload PYQs, browse content</h3>
               <p className="mt-2 text-sm text-white/65">Share knowledge, earn karma points</p>
             </article>
 
+docs/add-historical-changelog
             <article className="rounded-2xl border border-[#2a2a2a] bg-[#1a1a1a] p-6 text-center sm:p-8">
               <div className="text-[3rem] leading-none">🎯</div>
+
+            <article className="rounded-2xl border border-[#2a2a2a] bg-[#1a1a1a] p-8 text-center">
+              <div className="text-[3rem] leading-none" aria-hidden="true">🎯</div>
+ main
               <p className="text-sm font-semibold uppercase tracking-wide text-[#6366f1]">Step 3</p>
               <h3 className="mt-2 text-lg font-semibold">Ace your exams</h3>
               <p className="mt-2 text-sm text-white/65">Study smarter with AI-powered analytics</p>
@@ -276,7 +305,12 @@ export default function LandingPage() {
             <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl md:text-4xl">Ready to study smarter?</h2>
             <Link
               to="/signup"
+ docs/add-historical-changelog
               className="mt-6 inline-flex items-center justify-center gap-2 rounded-xl bg-white/10 px-6 py-3 text-base font-semibold text-white ring-1 ring-white/30 transition-colors hover:bg-white/20 sm:px-7 sm:text-lg"
+
+              className="mt-6 inline-flex items-center justify-center gap-2 rounded-xl bg-white/10 px-7 py-3 text-lg font-semibold text-white ring-1 ring-white/30 transition-colors hover:bg-white/20"
+              aria-label="Sign up now to start studying smarter"
+ main
             >
               Join PESimens
             </Link>

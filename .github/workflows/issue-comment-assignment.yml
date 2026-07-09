@@ -1,0 +1,77 @@
+name: Issue Comment Assignment
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  assign-from-comment:
+    if: github.event.issue.pull_request == null && github.event.comment.user.type != 'Bot'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Assign issue from trigger comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = (context.payload.comment.body || '').toLowerCase();
+            const commenter = context.payload.comment.user.login;
+            const issueNumber = context.payload.issue.number;
+
+            const triggerPhrases = [
+              '/assign',
+              'take',
+              'assign me',
+              'can i work on this',
+              'i would like to work on this',
+              'i want to work on this',
+              'please assign',
+            ];
+
+            const isTrigger = triggerPhrases.some((phrase) => body.includes(phrase));
+            if (!isTrigger) {
+              return;
+            }
+
+            const { data: issue } = await github.rest.issues.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+            });
+
+            if ((issue.assignees || []).length > 0) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+                body: `Thanks @${commenter}, this issue is already assigned.`
+              });
+              return;
+            }
+
+            try {
+              await github.rest.issues.addAssignees({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+                assignees: [commenter],
+              });
+
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+                body: `Assigned to @${commenter}. Good luck! 🚀`
+              });
+            } catch (error) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+                body: `@${commenter}, I could not assign this issue automatically. A maintainer can help with assignment.`
+              });
+              console.log(`Assignment failed for @${commenter}: ${error.message}`);
+            }
