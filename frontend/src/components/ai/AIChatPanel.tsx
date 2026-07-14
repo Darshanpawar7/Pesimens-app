@@ -1044,6 +1044,17 @@ export function AIChatPanel({ taskType, context, onClose, mode = 'exam' }: AICha
     }
   }, [])
 
+  // Close panel on Escape key press for keyboard accessibility
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose()
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [onClose])
+
   const starterPrompts = useMemo(() => {
     if (mode === 'general') {
       return [
