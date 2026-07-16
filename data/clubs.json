@@ -1,0 +1,271 @@
+{
+  "_comment": "Seed data for PESiMENs Clubs section. Compiled from public sources: clubs.pes.edu and PESUfy community docs (RR Campus). Categories match the app's CATEGORIES list: academic, technical, cultural, sports, social, social_service, entrepreneurship, arts, other.",
+  "clubs": [
+    {
+      "name": "PES Innovation Lab",
+      "category": "technical",
+      "description": "PES University's oldest and most prestigious technical club, fostering student-driven innovation, research projects, and hands-on engineering.",
+      "website": "https://www.theinnovationlab.in/"
+    },
+    {
+      "name": "The Alcoding Club",
+      "category": "technical",
+      "description": "The competitive programming club of PES University. Hosts coding contests, interview prep sessions, and algorithmic problem-solving workshops.",
+      "website": "https://thealcodingclub.vercel.app"
+    },
+    {
+      "name": "Google Developer Student Club (GDSC)",
+      "category": "technical",
+      "description": "Google-backed developer community running workshops, study jams, and hackathons on web, mobile, cloud, and ML technologies."
+    },
+    {
+      "name": "IEEE Robotics and Automation Society, PES University",
+      "category": "technical",
+      "description": "IEEE RAS student chapter focused on robotics, automation, and embedded systems projects and competitions.",
+      "website": "https://ieee-ras-pesu.github.io/website/"
+    },
+    {
+      "name": "IEEE Computer Society, PES University",
+      "category": "technical",
+      "description": "IEEE CS student chapter organizing technical talks, workshops, and events across computer science domains."
+    },
+    {
+      "name": "|Q⟩Forest - Quantum Computing Community",
+      "category": "technical",
+      "description": "Student community exploring quantum computing through study groups, talks, and hands-on sessions with quantum frameworks.",
+      "instagram": "https://www.instagram.com/pes.qforest/"
+    },
+    {
+      "name": "Apple Developers' Group (ADG)",
+      "category": "technical",
+      "description": "Student group focused on iOS/macOS development, Swift programming, and Apple ecosystem projects.",
+      "website": "https://adgpesu.wordpress.com"
+    },
+    {
+      "name": "ACM-W, PESU RR",
+      "category": "technical",
+      "description": "Women in Tech club under ACM-W, supporting and celebrating women in computing through mentorship, talks, and events."
+    },
+    {
+      "name": "WEAL - Mental Health in Tech Club",
+      "category": "social",
+      "description": "CSE department club focused on mental health awareness and wellbeing within the tech community."
+    },
+    {
+      "name": "Shunya - The Official Math Club",
+      "category": "academic",
+      "description": "The official mathematics club, hosting problem-solving sessions, math olympiad prep, and recreational mathematics events.",
+      "website": "https://shunya-pes.vercel.app"
+    },
+    {
+      "name": "Equinox - The Space Club",
+      "category": "technical",
+      "description": "Astronomy and space technology club organizing stargazing sessions, talks, and space-tech projects."
+    },
+    {
+      "name": "Aeolus",
+      "category": "technical",
+      "description": "Aero design club working on UAVs, aircraft design, and aeromodelling competitions.",
+      "website": "https://aeolus.pes.edu"
+    },
+    {
+      "name": "GronIT - Green Technology Club",
+      "category": "technical",
+      "description": "Green technology club of RR Campus promoting sustainable and eco-friendly tech solutions.",
+      "website": "https://gronit-pes.vercel.app/"
+    },
+    {
+      "name": "Nexus",
+      "category": "technical",
+      "description": "CSE department club (vertical) hosting technical events and peer-learning initiatives."
+    },
+    {
+      "name": "Encode.AI",
+      "category": "technical",
+      "description": "AI/ML-focused club under the CSE (AIML) department, running workshops and projects in machine learning and deep learning."
+    },
+    {
+      "name": "AURA Club",
+      "category": "technical",
+      "description": "CSE (AIML) department club focused on artificial intelligence and emerging technologies."
+    },
+    {
+      "name": "GCube PESU",
+      "category": "other",
+      "description": "The gaming club of PES University — esports tournaments, game nights, and game development meetups.",
+      "website": "https://gcube-pes.vercel.app/"
+    },
+    {
+      "name": "Team Haya",
+      "category": "sports",
+      "description": "Racing club under the Mechanical Department, designing and building competitive race vehicles."
+    },
+    {
+      "name": "Vega Racing Electric",
+      "category": "sports",
+      "description": "Electric vehicle racing team building formula-style EVs for national competitions."
+    },
+    {
+      "name": "The Entrepreneurship Cell",
+      "category": "entrepreneurship",
+      "description": "Student-run E-Cell fostering startup culture through pitch events, speaker sessions, and startup weekends.",
+      "website": "https://cie.pes.edu/ecell/"
+    },
+    {
+      "name": "PESU Venture Labs",
+      "category": "entrepreneurship",
+      "description": "Official venture lab supporting student startups with incubation, funding pathways, and mentorship.",
+      "website": "https://www.pesuventurelabs.com"
+    },
+    {
+      "name": "EnactusPESU",
+      "category": "entrepreneurship",
+      "description": "Student-run chapter of Enactus, building social-impact entrepreneurial projects."
+    },
+    {
+      "name": "The Trading Hub PESU",
+      "category": "entrepreneurship",
+      "description": "Finance and trading club covering markets, investing fundamentals, and trading strategy sessions."
+    },
+    {
+      "name": "Beetles Business Club",
+      "category": "entrepreneurship",
+      "description": "Business club hosting case competitions, business quizzes, and corporate-skills events."
+    },
+    {
+      "name": "PES MUN Society",
+      "category": "academic",
+      "description": "Model United Nations society organizing MUN conferences, debate training, and public-speaking practice.",
+      "website": "https://pesmunsociety.wixsite.com/home"
+    },
+    {
+      "name": "The PES Debating Society",
+      "category": "academic",
+      "description": "Competitive debating club participating in parliamentary debate tournaments and hosting internal debates."
+    },
+    {
+      "name": "TEDxPESU",
+      "category": "other",
+      "description": "Independently organized TED event bringing speakers and ideas worth spreading to campus.",
+      "website": "https://ted-x-pesu-2025.vercel.app/"
+    },
+    {
+      "name": "Team Encore",
+      "category": "cultural",
+      "description": "Official Western dance crew of PES University RR Campus, performing at fests and competitions."
+    },
+    {
+      "name": "Team Sanskrithi",
+      "category": "cultural",
+      "description": "Indian contemporary dance team blending classical and modern styles."
+    },
+    {
+      "name": "Team Trance",
+      "category": "cultural",
+      "description": "Western dance crew competing across inter-college cultural fests."
+    },
+    {
+      "name": "Nautanki",
+      "category": "arts",
+      "description": "Drama and theatre club staging plays, street theatre, and dramatics competitions."
+    },
+    {
+      "name": "The Music Club of PESU",
+      "category": "cultural",
+      "description": "Official music club of RR Campus, home to student bands, jam sessions, and live performances."
+    },
+    {
+      "name": "Chords",
+      "category": "cultural",
+      "description": "Indian music club celebrating classical and contemporary Indian music."
+    },
+    {
+      "name": "Kannada Koota RR Campus",
+      "category": "cultural",
+      "description": "Techno-cultural club celebrating Kannada language, literature, and culture on campus."
+    },
+    {
+      "name": "Linguista",
+      "category": "academic",
+      "description": "Language club for exploring and learning new languages together."
+    },
+    {
+      "name": "Jnaanada PESU",
+      "category": "academic",
+      "description": "Techno-linguistic club bridging language, culture, and technology.",
+      "website": "https://jnanada-pesu.vercel.app/"
+    },
+    {
+      "name": "The Grimm Readers PESU",
+      "category": "academic",
+      "description": "Book club hosting reading circles, book discussions, and literary events."
+    },
+    {
+      "name": "Quotient Quiz Club",
+      "category": "academic",
+      "description": "Quizzing club of RR Campus running trivia nights and competitive quiz tournaments."
+    },
+    {
+      "name": "Mosaic PESU",
+      "category": "arts",
+      "description": "Design and creatives club for visual art, illustration, and creative projects."
+    },
+    {
+      "name": "DSGNR",
+      "category": "arts",
+      "description": "Design club focused on graphic design, UI/UX, and visual communication."
+    },
+    {
+      "name": "PESU Meraki - The Fashion Club",
+      "category": "arts",
+      "description": "Fashion club organizing runway events, styling workshops, and fashion showcases."
+    },
+    {
+      "name": "PIXELS Photography Club",
+      "category": "arts",
+      "description": "Official photography club of RR Campus — photowalks, exhibitions, and photography contests."
+    },
+    {
+      "name": "HoPES PESU",
+      "category": "arts",
+      "description": "Official videography club of RR Campus, covering campus events and producing creative video content."
+    },
+    {
+      "name": "PESU Talkies",
+      "category": "arts",
+      "description": "Official film-making club producing short films and hosting screenwriting and cinema workshops."
+    },
+    {
+      "name": "Rotaract Club of PES University",
+      "category": "social_service",
+      "description": "Rotary-affiliated service club running community outreach, donation drives, and social initiatives."
+    },
+    {
+      "name": "Aikya PESU",
+      "category": "social_service",
+      "description": "Community service club working on social causes and volunteering programs."
+    },
+    {
+      "name": "The Changemakers' Society",
+      "category": "social_service",
+      "description": "Social impact club driving awareness campaigns and grassroots community projects."
+    },
+    {
+      "name": "Dhruva Club",
+      "category": "social_service",
+      "description": "CSR and community-services club organizing outreach and social-responsibility events."
+    },
+    {
+      "name": "init",
+      "category": "technical",
+      "description": "Official departmental club of BCA, hosting hackathons like MYSTARA and technical events.",
+      "website": "https://init-ca.vercel.app/"
+    },
+    {
+      "name": "Kalaangana",
+      "category": "cultural",
+      "description": "Official cultural club of the BCA department.",
+      "instagram": "https://www.instagram.com/kalaangana.pesu.ca/"
+    }
+  ]
+}

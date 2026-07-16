@@ -1,0 +1,106 @@
+{
+  "_comment": "Seed data for PESiMENs Placements section. Companies listed are well-known recruiters at PES University based on public community discussions (r/PESU). IMPORTANT: package_band values are broad public-knowledge ranges, NOT verified per-offer figures. Before merging, verify entries against the r/PESU placement statistics compilation thread (2022-present) and adjust years/bands. Fields match the app's Placement schema: company, role, package_band ('0-5L' | '5-10L' | '10-20L' | '20L+'), skills, year_of_placement, branch, campus.",
+  "_source": "https://www.reddit.com/r/PESU/comments/1l16bng/placement_statistics_compilation_2022_to_present/",
+  "placements": [
+    {
+      "company": "Microsoft",
+      "role": "Software Engineer",
+      "package_band": "20L+",
+      "skills": ["DSA", "System Design", "C++", "Problem Solving"],
+      "year_of_placement": 2025,
+      "branch": "CSE",
+      "campus": "RR",
+      "is_anonymous": true
+    },
+    {
+      "company": "Cisco",
+      "role": "Software Engineer",
+      "package_band": "20L+",
+      "skills": ["Networking", "C", "Python", "DSA"],
+      "year_of_placement": 2025,
+      "branch": "CSE",
+      "campus": "RR",
+      "is_anonymous": true
+    },
+    {
+      "company": "Intuit",
+      "role": "Software Engineer 1",
+      "package_band": "20L+",
+      "skills": ["Java", "DSA", "System Design"],
+      "year_of_placement": 2025,
+      "branch": "CSE",
+      "campus": "EC",
+      "is_anonymous": true
+    },
+    {
+      "company": "SAP Labs",
+      "role": "Associate Developer",
+      "package_band": "10-20L",
+      "skills": ["Java", "SQL", "Cloud Fundamentals"],
+      "year_of_placement": 2025,
+      "branch": "CSE",
+      "campus": "RR",
+      "is_anonymous": true
+    },
+    {
+      "company": "Akamai",
+      "role": "Software Engineer",
+      "package_band": "10-20L",
+      "skills": ["Networking", "Linux", "Python"],
+      "year_of_placement": 2024,
+      "branch": "CSE",
+      "campus": "RR",
+      "is_anonymous": true
+    },
+    {
+      "company": "Bosch",
+      "role": "Associate Software Engineer",
+      "package_band": "5-10L",
+      "skills": ["Embedded C", "Automotive Systems"],
+      "year_of_placement": 2024,
+      "branch": "ECE",
+      "campus": "RR",
+      "is_anonymous": true
+    },
+    {
+      "company": "Infosys",
+      "role": "Systems Engineer",
+      "package_band": "0-5L",
+      "skills": ["Java", "SQL", "Aptitude"],
+      "year_of_placement": 2024,
+      "branch": "Any",
+      "campus": "Pooled",
+      "is_anonymous": true
+    },
+    {
+      "company": "TCS",
+      "role": "Assistant Systems Engineer",
+      "package_band": "0-5L",
+      "skills": ["Programming Fundamentals", "Aptitude"],
+      "year_of_placement": 2024,
+      "branch": "Any",
+      "campus": "Pooled",
+      "is_anonymous": true
+    },
+    {
+      "company": "Accenture",
+      "role": "Associate Software Engineer",
+      "package_band": "0-5L",
+      "skills": ["Programming Fundamentals", "Communication"],
+      "year_of_placement": 2024,
+      "branch": "Any",
+      "campus": "Pooled",
+      "is_anonymous": true
+    },
+    {
+      "company": "Deloitte",
+      "role": "Analyst",
+      "package_band": "5-10L",
+      "skills": ["SQL", "Aptitude", "Case Solving"],
+      "year_of_placement": 2024,
+      "branch": "Any",
+      "campus": "Pooled",
+      "is_anonymous": true
+    }
+  ]
+}
