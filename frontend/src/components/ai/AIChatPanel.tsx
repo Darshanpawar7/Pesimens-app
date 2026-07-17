@@ -1012,6 +1012,17 @@ export function AIChatPanel({ taskType, context, onClose, mode = 'exam' }: AICha
   }, [])
 
   useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [onClose])
+
+  useEffect(() => {
     if (typeof window === 'undefined') return
     const updateViewportType = () => setIsMobileViewport(window.matchMedia('(max-width: 767px)').matches)
     updateViewportType()
