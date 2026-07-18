@@ -530,17 +530,17 @@ export default function ConfessionsPage() {
     setExpandedId(confessionId)
     fetchComments(confessionId)
   }
-
-  async function handleShare(confessionId: string, confessionText: string) {
+   async function handleShare(confessionId: string, confessionText: string) {
     try {
       await navigator.clipboard.writeText(confessionText)
       setCopiedShareId(confessionId)
+      toast({ variant: 'success', title: 'Copied to clipboard! ✅' })
       setTimeout(() => setCopiedShareId(prev => (prev === confessionId ? null : prev)), 1500)
     } catch {
       toast({ variant: 'error', title: 'Could not copy to clipboard' })
     }
   }
-
+  
   async function handleReport(confessionId: string) {
     try {
       await apiFetch(`/api/confessions/${confessionId}/flag`, { method: 'POST' })
