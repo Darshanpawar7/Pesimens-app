@@ -1,57 +1,82 @@
 {
-  "_comment": "FAQ-style placement insights for PESiMENs, per maintainer feedback: qualitative info on what actually helps students during placements, not just company names and packages. Paraphrased and structured from the PESU community FAQ (HackerSpace-PESU/pesu-for-dummies), which itself compiles real advice from r/PESU threads and alumni. Each entry pairs a question a student would realistically search with a practical, actionable answer.",
+  "_comment": "FAQ-style placement insights for PESiMENs, per maintainer feedback: qualitative info on what actually helps students during placements, not just company names and packages. Paraphrased and structured from the PESU community FAQ (HackerSpace-PESU/pesu-for-dummies), which itself compiles real advice from r/PESU threads and alumni.",
   "_source": "https://github.com/HackerSpace-PESU/pesu-for-dummies (community-maintained, sourced from r/PESU)",
   "faqs": [
     {
-      "question": "When should I start preparing for placements?",
-      "answer": "Start well before final year. Many students who placed well began building a foundation (DSA basics, at least one solid project) from their second or third year, then intensified prep 3-6 months before placement season. Waiting until final year to start from scratch puts you at a real disadvantage.",
+      "question": "When should I actually start preparing for placements?",
+      "answer": "Earlier than most people think. Students who did well typically built their DSA foundation and had at least one solid, deeply-understood project by their 2nd-3rd year, then ramped up intensely 3-6 months before placement season hit. Starting from zero in final year means you're competing against people with a 1-2 year head start.",
       "category": "timeline"
     },
     {
-      "question": "Does CGPA actually matter for placements?",
-      "answer": "Yes, but not infinitely. Many companies use CGPA as an initial shortlisting filter, so keeping it reasonably high (especially in your first year, since it's hard to recover from a bad start) keeps more doors open. That said, once you clear the CGPA cutoff for a company, what matters most is your skills and interview performance, not chasing a perfect 10. Don't sacrifice actual skill-building just to grind for marginal CGPA gains.",
+      "question": "Can backlogs stop me from sitting for placements?",
+      "answer": "Yes — this trips people up. If you have any pending backlog (a failed or withdrawn course you haven't cleared), you will not be allowed to sit for placements at all, regardless of how strong your other credentials are. Clear backlogs as early as possible, ideally through the summer backlog exam rather than waiting for the course to be offered again the following year, since that route can push your eligibility back by a full year.",
+      "category": "eligibility"
+    },
+    {
+      "question": "Does CGPA actually matter, or is it overrated?",
+      "answer": "It matters as a filter, not as the deciding factor. Many companies use a CGPA cutoff just to shortlist who gets considered at all — so falling below that bar can knock you out before you even get an interview, especially since first-year CGPA is hard to recover from later. But once you clear a company's cutoff, everyone in the interview room is judged on skills and performance, not decimal points. Don't grind for a marginal CGPA bump at the cost of actual technical skill.",
       "category": "academics"
     },
     {
-      "question": "What actually helps get shortlisted and selected, beyond CGPA?",
-      "answer": "Having real, explainable projects on your resume matters a lot. Interviewers frequently dig into project details, so 1-2 solid projects you deeply understand outperform a long list of shallow ones. Consistent DSA/problem-solving practice, being comfortable with the fundamentals of your stream (not just memorized theory), and a clean, focused resume all compound together.",
+      "question": "What actually gets you shortlisted and selected, beyond CGPA?",
+      "answer": "1-2 solid, deeply-understood projects beat five shallow ones — interviewers dig into project details, and it shows fast if you don't actually know your own work. Combine that with consistent DSA/problem-solving practice (not last-minute cramming), real comfort with your core stream fundamentals, and a clean one-page resume that doesn't oversell skills you can't back up in conversation.",
       "category": "preparation"
     },
     {
-      "question": "Should I focus only on CGPA or also build practical skills?",
-      "answer": "Both matter, but practical, industry-relevant skills carry more weight by placement time. A high CGPA without the technical proficiency to back it up in interviews won't get you selected. Treat your degree as a base and spend real time outside the syllabus on skills recruiters actually test for.",
-      "category": "preparation"
+      "question": "What should I focus on for the aptitude/written test round?",
+      "answer": "Most companies run a screening round covering quantitative aptitude, logical reasoning, verbal ability, and often basic coding. This round exists purely to filter volume before the interview stage, so treat it as non-negotiable practice — plenty of free aptitude question banks exist online, and consistent short daily practice beats occasional long cram sessions.",
+      "category": "interview_rounds"
+    },
+    {
+      "question": "How should I prepare for the technical/coding interview round?",
+      "answer": "Be genuinely solid on data structures and algorithms fundamentals — don't just memorize solutions, understand the reasoning so you can adapt when the interviewer tweaks the question. Be ready to explain and defend every project and skill listed on your resume in depth; a shaky answer about your own project is a common way to lose credibility fast.",
+      "category": "interview_rounds"
+    },
+    {
+      "question": "What do HR rounds actually test, and how do I prepare?",
+      "answer": "HR rounds are less about technical depth and more about consistency, communication, and self-awareness — expect variations of 'tell me about yourself,' your strengths/weaknesses, and where you see yourself in a few years. Practicing these out loud beforehand (even just to yourself) helps more than most people expect, since fumbling here after a strong technical round is a common and avoidable stumble.",
+      "category": "interview_rounds"
     },
     {
       "question": "How important are internships before final placements?",
-      "answer": "Very useful when available. Internships (research or industry) give you real experience to talk about in interviews and sometimes convert directly into full-time offers. If you haven't landed one, personal projects that show similar depth and initiative can partially fill that gap.",
+      "answer": "Very useful when you can get one — they give you real, talkable experience for interviews and sometimes convert directly into full-time offers, skipping the placement process entirely. If you didn't land one, personal projects with real depth and initiative can partially close that gap, but be ready to speak about them with the same seriousness as a job.",
       "category": "experience"
     },
     {
-      "question": "Where can I find placement statistics and past results?",
-      "answer": "The most detailed community-maintained placement statistics compilation is shared periodically on r/PESU — search for the 'Placement Statistics Compilation' thread for the most recent breakdown by company, branch, and package range.",
-      "category": "resources",
-      "source_link": "https://www.reddit.com/r/PESU/comments/1l16bng/placement_statistics_compilation_2022_to_present/"
-    },
-    {
       "question": "Do RR and EC campus students have different placement chances?",
-      "answer": "No — placements are pooled across both campuses. Companies interview candidates from both RR and EC together and don't distinguish between them. Any perception that one campus does better is mostly a statistics artifact: RR simply has a much larger student body, so more RR students get placed in absolute numbers, not because of any bias.",
+      "answer": "No — placements are pooled across both campuses, and companies interview candidates from both together without distinguishing where they're from. Any perception that one campus does better is a statistics artifact, not bias: RR simply has a much larger student body, so more RR students get placed in absolute numbers even though each student's individual odds are roughly the same.",
       "category": "general"
     },
     {
+      "question": "Is CS-AIML placed as well as core CSE?",
+      "answer": "Historically, core CSE has had the stronger and more consistent placement track record, since more companies specifically recruit for core CS roles and AIML-specific roles at the undergraduate level are comparatively rare (most AIML-focused jobs expect a Master's). If you're choosing between the two purely for placement outcomes, core CSE is generally the safer bet; AIML makes more sense if you're genuinely drawn to a research-heavy, math-first path.",
+      "category": "branch_choice"
+    },
+    {
       "question": "Is it worth staying connected with seniors and alumni during placement prep?",
-      "answer": "Yes, strongly recommended. Seniors are often the fastest way to learn about upcoming openings, referral opportunities, and realistic interview experiences at specific companies. Most PESU communities (clubs, batch groups) are active on Discord — staying engaged there before placement season starts pays off.",
+      "answer": "Yes, strongly recommended. Seniors are often the fastest route to learning about upcoming openings, referral opportunities, and honest interview experiences at specific companies before they're public knowledge. Most PESU clubs and batch communities are active on Discord, so getting plugged in well before placement season starts pays off.",
       "category": "networking"
     },
     {
       "question": "How should I keep my resume and LinkedIn ready?",
-      "answer": "Keep both updated continuously rather than scrambling right before placements — revisiting your resume every couple of months (or after any major update like a new project or internship) keeps it recruiter-ready and makes applying to sudden openings much less stressful.",
+      "answer": "Update both continuously instead of scrambling right before placement season — revisiting them every couple of months, or right after any major update like a new project or internship, keeps them recruiter-ready. This also means you can react fast when a sudden opening or referral opportunity shows up.",
       "category": "preparation"
     },
     {
+      "question": "Where can I find real placement statistics and past results?",
+      "answer": "The most detailed community-maintained placement statistics compilation is periodically shared on r/PESU — search for the 'Placement Statistics Compilation' thread there for a breakdown by company, branch, and package range across recent years.",
+      "category": "resources",
+      "source_link": "https://www.reddit.com/r/PESU/comments/1l16bng/placement_statistics_compilation_2022_to_present/"
+    },
+    {
       "question": "What's a common mistake students make with placement prep?",
-      "answer": "Starting too late and trying to cram everything (DSA, projects, aptitude, communication skills) into the final few months. Consistent, spread-out effort across semesters beats last-minute intensity — both for retention and for stress levels during an already demanding final year.",
+      "answer": "Starting too late and trying to cram DSA, projects, aptitude, and communication skills all into the final few months before placements. Consistent, spread-out effort across semesters beats last-minute intensity — both for how much actually sticks and for your stress levels during an already demanding final year.",
       "category": "mistakes"
+    },
+    {
+      "question": "Should I prioritize CGPA over practical/industry skills?",
+      "answer": "Practical, industry-relevant skills carry more weight by the time placements arrive. A high CGPA with weak technical proficiency will not get you through interviews — treat your degree as the baseline and spend real time outside the syllabus on the specific skills recruiters actually test for in your target roles.",
+      "category": "preparation"
     }
   ]
 }
