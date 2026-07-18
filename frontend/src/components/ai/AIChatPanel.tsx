@@ -25,6 +25,7 @@ import { useAI, getAIErrorMessage } from '../../hooks/useAI'
 import { askAIStream } from '../../services/aiService'
 import { useAthenaHistory, useInsertAthenaHistory, useClearAthenaHistory } from '../../hooks/useAthenaHistory'
 import { useAuthStore } from '@/store/auth'
+import { useToast } from '@/components/ui/use-toast'
 import type { AITask, AIResponse, AthenaAnswerMode, AthenaPayload } from '../../services/aiService'
 
 export interface AIChatPanelProps {
@@ -940,6 +941,7 @@ function recoverAthenaFromContent(content: string): AthenaPayload | null {
 }
 
 export function AIChatPanel({ taskType, context, onClose, mode = 'exam' }: AIChatPanelProps) {
+  const { toast } = useToast()
   const [input, setInput] = useState('')
   const [messages, setMessages] = useState<Message[]>([])
   const [copiedMessageIndex, setCopiedMessageIndex] = useState<number | null>(null)
@@ -1174,14 +1176,22 @@ export function AIChatPanel({ taskType, context, onClose, mode = 'exam' }: AICha
 
   const handleCopyMessage = async (content: string, messageIndex: number) => {
     const copied = await copyText(content)
-    if (!copied) return
+    if (!copied) {
+      toast({ variant: 'error', title: 'Could not copy to clipboard' })
+      return
+    }
+    toast({ variant: 'success', title: 'Copied to clipboard! ✅' })
     setCopiedMessageIndex(messageIndex)
     window.setTimeout(() => setCopiedMessageIndex((prev) => (prev === messageIndex ? null : prev)), 1600)
   }
 
   const handleCopyCode = async (code: string, codeKey: string) => {
     const copied = await copyText(code)
-    if (!copied) return
+    if (!copied) {
+      toast({ variant: 'error', title: 'Could not copy to clipboard' })
+      return
+    }
+    toast({ variant: 'success', title: 'Copied to clipboard! ✅' })
     setCopiedCodeKey(codeKey)
     window.setTimeout(() => setCopiedCodeKey((prev) => (prev === codeKey ? null : prev)), 1600)
   }

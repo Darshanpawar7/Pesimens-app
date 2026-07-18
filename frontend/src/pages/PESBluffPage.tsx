@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { apiFetch } from '@/lib/api'
 import { useGameSession, type GameSession } from '@/hooks/useGameSession'
 import { useAuthStore } from '@/store/auth'
+import { useToast } from '@/components/ui/use-toast'
 import { BLUFF_QUESTIONS } from '@/data/bluffQuestions'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -186,6 +187,7 @@ export default function PESBluffPage() {
   const [localError, setLocalError] = useState<string | null>(null)
   const [showReveal, setShowReveal] = useState<LastReveal | null>(null)
   const [copied, setCopied] = useState(false)
+  const { toast } = useToast()
   const [showHistory, setShowHistory] = useState(false)
   const [entryTab, setEntryTab] = useState<'join' | 'public'>('join')
   const [publicRooms, setPublicRooms] = useState<PublicRoom[]>([])
@@ -307,9 +309,15 @@ export default function PESBluffPage() {
   }
   async function copyRoomCode() {
     if (!roomCode) return
-    try { await navigator.clipboard.writeText(roomCode); setCopied(true); setTimeout(() => setCopied(false), 1500) } catch { /* */ }
+    try {
+      await navigator.clipboard.writeText(roomCode)
+      setCopied(true)
+      toast({ variant: 'success', title: 'Copied to clipboard! ✅' })
+      setTimeout(() => setCopied(false), 1500)
+    } catch {
+      toast({ variant: 'error', title: 'Could not copy to clipboard' })
+    }
   }
-
   // ══════════════════════════════════════════════════════════════════════════
   // SCREEN: Entry / No session
   // ══════════════════════════════════════════════════════════════════════════

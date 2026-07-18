@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGameSession, type GameSession } from '@/hooks/useGameSession'
 import { useAuthStore } from '@/store/auth'
+import { useToast } from '@/components/ui/use-toast'
 import { DrawCanvas } from '@/components/games/drawl/DrawCanvas'
 import { GuessChat } from '@/components/games/drawl/GuessChat'
 import { PlayerList } from '@/components/games/drawl/PlayerList'
@@ -132,6 +133,7 @@ export default function PESDrawlPage() {
   const [joinCode, setJoinCode] = useState('')
   const [localError, setLocalError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
+  const { toast } = useToast()
   const [elapsed, setElapsed] = useState(0)
   const [roundEndCountdown, setRoundEndCountdown] = useState<number | null>(null)
   const initRef = useRef<string | null>(null)
@@ -384,11 +386,14 @@ export default function PESDrawlPage() {
  
   async function copyRoomCode() {
     if (!roomCode) return
-    try {
+   try {
       await navigator.clipboard.writeText(roomCode)
       setCopied(true)
+      toast({ variant: 'success', title: 'Copied to clipboard! ✅' })
       setTimeout(() => setCopied(false), 1500)
-    } catch { }
+    } catch {
+      toast({ variant: 'error', title: 'Could not copy to clipboard' })
+    }
   }
  
   const revealedIndices = gameState.currentWord && gameState.roundStartedAt
