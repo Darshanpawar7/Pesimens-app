@@ -126,31 +126,31 @@ export default function LandingPage() {
           </div>
         </nav>
 
-        <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-6xl flex-1 flex-col items-center justify-center px-4 pb-16 pt-32 text-center">
-          <span className="inline-flex items-center rounded-full border border-[#6366f1]/45 bg-[#1a1a1a] px-4 py-1.5 text-xs font-semibold tracking-wide text-white/90">
+        <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-6xl flex-1 flex-col items-center justify-center px-5 sm:px-6 md:px-8 pb-14 sm:pb-16 pt-24 sm:pt-28 md:pt-32 text-center">
+          <span className="inline-flex items-center rounded-full border border-[#6366f1]/45 bg-[#1a1a1a] px-4 py-2 text-xs sm:text-sm font-semibold tracking-wide text-white/90">
             <span aria-hidden="true">🎓</span> Built for PESU students
           </span>
 
-          <h1 className="mt-6 text-4xl font-semibold leading-tight tracking-tight sm:text-5xl md:text-[64px]">
+          <h1 className="mt-6 text-4xl font-semibold leading-tight tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
             <span className="text-white">Your campus, </span>
             <span className="bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] bg-clip-text text-transparent">supercharged</span>
           </h1>
 
-          <p className="mt-5 max-w-3xl text-base text-white/70 sm:text-lg">
+          <p className="mt-5 max-w-2xl text-base leading-7 text-white/75 sm:text-lg sm:leading-8">
             PYQs, analytics, mentors, placements and more — all in one place for PES University
           </p>
 
           <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
             <Link
               to="/signup"
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] px-6 py-3 text-sm font-semibold text-white shadow-[0_20px_60px_-30px_rgba(99,102,241,0.95)] transition-transform hover:-translate-y-0.5"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] px-6 py-3 text-sm font-semibold text-white shadow-[0_20px_60px_-30px_rgba(99,102,241,0.95)] transition-transform hover:-translate-y-0.5"
               aria-label="Sign up for free and get started"
             >
               Get Started Free <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
             <Link
               to="/pyqs"
-              className="inline-flex items-center justify-center rounded-xl border border-white/25 bg-transparent px-6 py-3 text-sm font-semibold text-white transition-colors hover:border-white/45 hover:bg-white/5"
+              className="w-full sm:w-auto inline-flex items-center justify-center rounded-xl border border-white/25 bg-transparent px-6 py-3 text-sm font-semibold text-white transition-colors hover:border-white/45 hover:bg-white/5"
             >
               Browse PYQs
             </Link>
@@ -159,7 +159,7 @@ export default function LandingPage() {
           <button
             type="button"
             onClick={() => window.scrollTo({ top: window.innerHeight * 0.95, behavior: 'smooth' })}
-            className="scroll-arrow absolute bottom-8 left-1/2 -translate-x-1/2 rounded-full border border-[#2a2a2a] bg-[#1a1a1a]/75 p-2 text-white/75 hover:text-white"
+            className="scroll-arrow absolute bottom-5 sm:bottom-8 left-1/2 -translate-x-1/2 rounded-full border border-[#2a2a2a] bg-[#1a1a1a]/75 p-2 text-white/75 hover:text-white"
             aria-label="Scroll down to see more content"
           >
             <ChevronDown className="h-4 w-4" aria-hidden="true" />
@@ -170,7 +170,7 @@ export default function LandingPage() {
       <section className="border-b border-[#2a2a2a] bg-[#111111] py-6">
         <div className="mx-auto flex max-w-6xl flex-col items-center gap-3 px-4 text-center">
           <p className="text-sm font-semibold text-white/80">Trusted by PESU students across EC & RR campus</p>
-          <div className="flex flex-wrap items-center justify-center gap-2 text-sm text-white/65">
+          <div className="flex flex-wrap items-center justify-center gap-4 text-xs sm:text-sm text-white/65">
             {socialStats.map((stat, idx) => (
               <div key={stat} className="flex items-center gap-2">
                 <span className="font-semibold text-white">{stat}</span>
@@ -187,11 +187,11 @@ export default function LandingPage() {
             Everything you need to ace PESU
           </h2>
 
-          <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2">
             {featureCards.map(card => (
               <article
                 key={card.title}
-                className="rounded-2xl border border-[#2a2a2a] bg-gradient-to-br from-[#1a1a1a] to-[#131313] p-6"
+                className="rounded-2xl border border-[#2a2a2a] bg-gradient-to-br from-[#1a1a1a] to-[#131313] p-5 sm:p-6 transition-all duration-300 hover:-translate-y-1 hover:border-[#6366f1]/40 hover:shadow-xl"
               >
                 <div className="flex items-start gap-4">
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#6366f1]/20 text-xl">
