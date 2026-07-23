@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowLeft, Check, CheckCheck, Pencil, SendHorizontal } from 'lucide-react'
 import { DetailBackButton } from '@/components/common/DetailBackButton'
+import { EmptyState } from '@/components/common/EmptyState'
 import { apiFetch } from '@/lib/api'
 import {
   adaptiveRefetchIntervalWhenActive,
@@ -1067,13 +1068,15 @@ export default function MessagesPage() {
               })}
 
               {conversationItems.length === 0 && !search.trim() && (
-                <div className="px-5 py-14 text-center">
-                  <p className="text-sm font-semibold text-white">No messages yet</p>
-                  <p className="mt-1 text-xs text-white/55">DM a mentor or batchmate to get started</p>
-                  <Link to="/mentors" className="mt-4 inline-block text-sm font-semibold text-indigo-300 hover:text-indigo-200">
-                    Browse Mentors {'->'}
-                  </Link>
-                </div>
+                <EmptyState
+                  title="No messages yet"
+                  description="DM a mentor or batchmate to get started"
+                  action={(
+                    <Link to="/mentors" className="text-sm font-semibold text-indigo-300 hover:text-indigo-200">
+                      Browse Mentors {'->'}
+                    </Link>
+                  )}
+                />
               )}
             </div>
           </aside>
