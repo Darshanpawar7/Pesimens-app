@@ -37,7 +37,7 @@ export function CreateClubModal({ onClose, onSuccess }: CreateClubModalProps) {
       onSuccess?.()
       onClose()
     } catch (err) {
-      toast({ variant: 'error', title: 'Failed to create club', description: (err as Error).message })
+      toast({ variant: 'error', title: 'Failed to create club', description: err instanceof Error ? err.message : String(err) })
     }
   }
 

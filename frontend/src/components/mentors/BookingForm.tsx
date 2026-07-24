@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Calendar } from '@/components/ui/calendar'
@@ -92,9 +92,16 @@ export function BookingForm({ mentor, onSuccess, onCancel }: Props) {
   }, [selectedDate, availData, duration])
 
   // Deselect time if it's no longer available when duration changes
-  if (selectedTime && !availableTimes.includes(selectedTime)) {
-    setSelectedTime('')
-  }
+  const prevSelectedTimeRef = useRef(selectedTime)
+  useEffect(() => {
+    if (selectedTime && selectedTime !== prevSelectedTimeRef.current) {
+      prevSelectedTimeRef.current = selectedTime
+    }
+    if (prevSelectedTimeRef.current && !availableTimes.includes(prevSelectedTimeRef.current)) {
+      setSelectedTime('')
+      prevSelectedTimeRef.current = ''
+    }
+  }, [availableTimes, selectedTime])
 
   async function handleBook(e: React.FormEvent) {
     e.preventDefault()
