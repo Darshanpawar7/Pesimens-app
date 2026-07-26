@@ -57,7 +57,7 @@ export function ClubProfile({ club, currentUserId, onEdit }: ClubProfileProps) {
       {/* Cover image */}
       <div className="relative">
         {club.cover_image_url ? (
-          <img src={club.cover_image_url} alt="" className="w-full h-40 object-cover rounded-xl" />
+          <img src={club.cover_image_url} alt={`${club.name} cover image`} className="w-full h-40 object-cover rounded-xl" />
         ) : (
           <div className="w-full h-40 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600" />
         )}
