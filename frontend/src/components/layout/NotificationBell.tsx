@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { dedupeNotifications, useUnreadCount, useNotifications, useMarkAllAsRead, type Notification } from '../../hooks/useNotifications'
+import { dedupeNotifications, useUnreadCount, useNotifications, useMarkAllAsRead, useMarkAsRead, type Notification } from '../../hooks/useNotifications'
 import { cn } from '../../lib/utils'
 
 function timeAgo(iso: string) {
@@ -22,11 +22,23 @@ const typeIcon: Record<string, string> = {
   karma_update: '⭐',
 }
 
-function NotifItem({ n, index }: { n: Notification; index: number }) {
+function NotifItem({ n, index, closeMenu }: { n: Notification; index: number; closeMenu: () => void }) {
   const navigate = useNavigate()
+  const markAsRead = useMarkAsRead()
+
+  const handleClick = () => {
+    if (!n.is_read) {
+      markAsRead.mutate(n.id)
+    }
+    if (n.link) {
+      navigate(n.link)
+      closeMenu()
+    }
+  }
+
   return (
     <button
-      onClick={() => n.link && navigate(n.link)}
+      onClick={handleClick}
       className={cn(
         'w-full px-4 py-3 text-left transition-colors duration-200 hover:bg-slate-50/90 will-change-transform motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-top-1 dark:hover:bg-slate-800/70',
         !n.is_read && 'bg-indigo-50/60 dark:bg-indigo-500/10'
@@ -46,7 +58,18 @@ function NotifItem({ n, index }: { n: Notification; index: number }) {
           <p className="mt-1 text-[11px] uppercase tracking-[0.08em] text-slate-400 dark:text-slate-500">{timeAgo(n.created_at)}</p>
         </div>
         {!n.is_read && (
-          <div className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-indigo-500" />
+          <div
+            role="button"
+            tabIndex={0}
+            onClick={(e) => {
+              e.stopPropagation()
+              markAsRead.mutate(n.id)
+            }}
+            className="mt-1 flex h-6 w-6 items-center justify-center rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+            title="Mark as read"
+          >
+            <div className="h-2.5 w-2.5 rounded-full bg-indigo-500" />
+          </div>
         )}
       </div>
     </button>
@@ -105,10 +128,9 @@ export function NotificationBell() {
             )}
           </div>
 
-          {/* Items */}
           <div className="max-h-[70vh] divide-y divide-slate-100 overflow-y-auto dark:divide-slate-800 sm:max-h-80">
             {recent.length > 0 ? (
-              recent.map((n, idx) => <NotifItem key={n.id} n={n} index={idx} />)
+              recent.map((n, idx) => <NotifItem key={n.id} n={n} index={idx} closeMenu={() => setOpen(false)} />)
             ) : (
               <div className="px-4 py-8 text-center text-sm text-slate-400 dark:text-slate-500">
                 No notifications yet

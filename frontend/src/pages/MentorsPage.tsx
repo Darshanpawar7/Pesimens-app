@@ -8,6 +8,7 @@ import { MentorCard, type Mentor } from '@/components/mentors/MentorCard'
 import { MentorApplicationForm } from '@/components/mentors/MentorApplicationForm'
 import { BookingForm } from '@/components/mentors/BookingForm'
 import { RatingForm } from '@/components/mentors/RatingForm'
+import { AvailabilityManager } from '@/components/mentors/AvailabilityManager'
 import { apiFetch, ApiError } from '@/lib/api'
 import { useAuthStore } from '@/store/auth'
 import { useEffect, useRef, useCallback } from 'react'
@@ -44,7 +45,8 @@ export function MentorsPage() {
   const [deleteReason, setDeleteReason] = useState('')
   const [isDeleting, setIsDeleting] = useState(false)
   const [deleteError, setDeleteError] = useState<string | null>(null)
-  const [tab, setTab] = useState<'browse' | 'bookings'>('browse')
+  const isMentor = profile?.role === 'mentor'
+  const [tab, setTab] = useState<'browse' | 'bookings' | 'manage-availability'>('browse')
   const sentinelRef = useRef<HTMLDivElement>(null)
 
   const mentorsQuery = useInfiniteQuery({
@@ -65,6 +67,17 @@ export function MentorsPage() {
     queryKey: ['my-bookings'],
     queryFn: () => apiFetch<{ bookings: Booking[] }>('/api/mentors/me/bookings'),
     enabled: tab === 'bookings',
+  })
+
+  const updateStatusMutation = useMutation({
+    mutationFn: ({ id, status }: { id: string; status: string }) =>
+      apiFetch(`/api/bookings/${id}/status`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status }),
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['my-bookings'] })
+    },
   })
 
   const handleDeleteMentor = async () => {
@@ -136,19 +149,19 @@ export function MentorsPage() {
         </div>
 
         {/* Tabs */}
-        <div className="flex w-full gap-1 rounded-xl border border-[#2a2a2a] bg-[#1a1a1a] p-1 sm:w-fit">
-          {(['browse', 'bookings'] as const).map(t => (
+        <div className="flex w-full gap-1 rounded-xl border border-[#2a2a2a] bg-[#1a1a1a] p-1 sm:w-fit overflow-x-auto">
+          {(isMentor ? ['browse', 'bookings', 'manage-availability'] as const : ['browse', 'bookings'] as const).map(t => (
             <button
               key={t}
               onClick={() => setTab(t)}
               className={[
-                'rounded-lg px-4 py-2 text-sm font-semibold transition-all duration-200',
+                'rounded-lg px-4 py-2 text-sm font-semibold transition-all duration-200 whitespace-nowrap',
                 tab === t
                   ? 'bg-[#6366f1]/15 text-white ring-1 ring-[#6366f1]/30'
                   : 'text-white/60 hover:bg-[#1a1a1a]/5 hover:text-white/80',
               ].join(' ')}
             >
-              {t === 'browse' ? 'Browse Mentors' : 'My Bookings'}
+              {t === 'browse' ? 'Browse Mentors' : t === 'bookings' ? 'My Bookings' : 'Manage Availability'}
             </button>
           ))}
         </div>
@@ -272,8 +285,54 @@ export function MentorsPage() {
                 {b.status === 'completed' && (
                   <RatingForm bookingId={b.id} onSuccess={() => queryClient.invalidateQueries({ queryKey: ['my-bookings'] })} />
                 )}
+                
+                <div className="mt-3 flex gap-2">
+                  {b.mentor_id === profile?.id ? (
+                    // User is the mentor for this booking
+                    b.status === 'pending' && (
+                      <>
+                        <Button 
+                          size="sm" 
+                          className="bg-green-600 text-white hover:bg-green-700"
+                          onClick={() => updateStatusMutation.mutate({ id: b.id, status: 'confirmed' })}
+                          disabled={updateStatusMutation.isPending}
+                        >
+                          Accept
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="border-red-500/50 text-red-400 hover:bg-red-500/10"
+                          onClick={() => updateStatusMutation.mutate({ id: b.id, status: 'cancelled' })}
+                          disabled={updateStatusMutation.isPending}
+                        >
+                          Decline
+                        </Button>
+                      </>
+                    )
+                  ) : (
+                    // User is the student
+                    (b.status === 'pending' || b.status === 'confirmed') && (
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        className="border-red-500/50 text-red-400 hover:bg-red-500/10"
+                        onClick={() => updateStatusMutation.mutate({ id: b.id, status: 'cancelled' })}
+                        disabled={updateStatusMutation.isPending}
+                      >
+                        Cancel Booking
+                      </Button>
+                    )
+                  )}
+                </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {tab === 'manage-availability' && (
+          <div className="pt-2">
+            <AvailabilityManager />
           </div>
         )}
 

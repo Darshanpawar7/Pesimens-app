@@ -17,7 +17,7 @@ export function AuthCallbackPage() {
   const setProfileLoading = useAuthStore(s => s.setProfileLoading)
   const redirectAfterAuth = useExploreUIStore(s => s.redirectAfterAuth)
   const clearRedirectAfterAuth = useExploreUIStore(s => s.clearRedirectAfterAuth)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<{ message: string; isExpiredToken?: boolean } | null>(null)
   const [callbackComplete, setCallbackComplete] = useState(false)
   const [transitionLabel, setTransitionLabel] = useState('Signing you in...')
   const callbackExecutedRef = useRef(false)
@@ -34,7 +34,11 @@ export function AuthCallbackPage() {
         hashParams.get('error_description') || hashParams.get('error')
 
       if (errorDescription) {
-        setError(`Authentication failed. ${errorDescription}`)
+        const isExpired = errorDescription.toLowerCase().includes('expired') || errorDescription.toLowerCase().includes('invalid')
+        setError({
+          message: isExpired ? 'This login link has expired or is invalid.' : `Authentication failed. ${errorDescription}`,
+          isExpiredToken: isExpired
+        })
         setCallbackComplete(true)
         return
       }
@@ -47,7 +51,7 @@ export function AuthCallbackPage() {
         session = s
         if (!session) {
           console.error('Code exchange failed and no session present:', exchangeError?.message)
-          setError('Authentication failed. Please try again.')
+          setError({ message: 'Authentication failed. Please try again.' })
           setCallbackComplete(true)
           return
         }
@@ -65,7 +69,7 @@ export function AuthCallbackPage() {
             refresh_token: hashRefreshToken,
           })
           if (setSessionError) {
-            setError('Authentication failed. Please try again.')
+            setError({ message: 'Authentication failed. Please try again.' })
             setCallbackComplete(true)
             return
           }
@@ -81,7 +85,7 @@ export function AuthCallbackPage() {
         }
 
         if (!s) {
-          setError('Authentication failed. No authorization code found.')
+          setError({ message: 'Authentication failed. No authorization code found.' })
           setCallbackComplete(true)
           return
         }
@@ -143,7 +147,7 @@ export function AuthCallbackPage() {
       setCallbackComplete(true)
     } catch (err) {
       console.error('Callback error:', err)
-      setError('Something went wrong. Please try again.')
+      setError({ message: 'Something went wrong. Please try again.' })
       setCallbackComplete(true)
     }
   }, [setSession, setProfile, setProfileLoading])
@@ -193,11 +197,25 @@ export function AuthCallbackPage() {
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-950 px-4">
-        <div className="max-w-sm rounded-2xl border border-slate-700 bg-slate-900 px-6 py-5 text-center shadow-[0_18px_42px_-34px_rgba(0,0,0,0.55)]">
-          <p className="font-medium text-rose-400">{error}</p>
-          <a href="/login" className="mt-4 inline-block text-sm text-sky-400 hover:text-sky-300 transition-colors">
-            Back to login
-          </a>
+        <div className="max-w-sm w-full rounded-2xl border border-slate-700 bg-slate-900 px-6 py-8 text-center shadow-[0_18px_42px_-34px_rgba(0,0,0,0.55)]">
+          <div className="mb-4 mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-rose-500/10">
+            <span className="text-xl text-rose-500">⚠️</span>
+          </div>
+          <h2 className="mb-2 text-lg font-semibold text-white">Login Failed</h2>
+          <p className="font-medium text-slate-400 mb-6">{error.message}</p>
+          
+          {error.isExpiredToken ? (
+            <button
+              onClick={() => navigate('/login')}
+              className="w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-500"
+            >
+              Resend magic link
+            </button>
+          ) : (
+            <a href="/login" className="inline-block text-sm text-sky-400 hover:text-sky-300 transition-colors">
+              Back to login
+            </a>
+          )}
         </div>
       </div>
     )

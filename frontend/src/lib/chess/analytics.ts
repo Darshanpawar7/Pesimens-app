@@ -29,7 +29,7 @@ export async function trackChessEvent(
     } = await supabase.auth.getUser()
 
     if (import.meta.env.DEV) {
-      console.log('[Chess Analytics]', eventType, payload)
+      console.warn('[Chess Analytics]', eventType, payload)
       return
     }
 

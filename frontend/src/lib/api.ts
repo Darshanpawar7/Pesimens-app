@@ -51,7 +51,7 @@ function getCsrfTokenTimestampMs(token: string): number | null {
  */
 async function getCsrfToken(): Promise<string> {
   const now = Date.now()
-  
+
   // Return cached token while outside the refresh buffer.
   if (csrfToken && csrfTokenExpiry > now) {
     return csrfToken
@@ -124,7 +124,7 @@ async function refreshPesimensToken(): Promise<string | null> {
   if (Date.now() < tokenRefreshBlockedUntil) {
     if (Date.now() >= tokenRefreshCooldownLoggedUntil) {
       const remainingSeconds = Math.max(1, Math.ceil((tokenRefreshBlockedUntil - Date.now()) / 1000))
-      console.info(`[auth] refresh cooldown active for ${remainingSeconds}s; skipping /api/auth/refresh`)
+      console.warn(`[auth] refresh cooldown active for ${remainingSeconds}s; skipping /api/auth/refresh`)
       tokenRefreshCooldownLoggedUntil = Date.now() + 15 * 1000
     }
     return null
@@ -163,7 +163,7 @@ async function refreshPesimensToken(): Promise<string | null> {
             ?? 30
           tokenRefreshBlockedUntil = Date.now() + (retryAfterSeconds * 1000)
           tokenRefreshCooldownLoggedUntil = 0
-          console.info(`[auth] refresh rate-limited by server; backing off for ${retryAfterSeconds}s`)
+          console.warn(`[auth] refresh rate-limited by server; backing off for ${retryAfterSeconds}s`)
         }
         return null
       }

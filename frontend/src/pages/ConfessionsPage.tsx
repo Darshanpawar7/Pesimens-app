@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { ApiError, apiFetch } from '@/lib/api'
 import { cn, formatDistanceToNow } from '@/lib/utils'
 import { useToast } from '@/components/ui/use-toast'
+import { ConfessionSkeleton } from '@/components/ui/skeleton'
 import { useConfessionsRealtime } from '@/hooks/useConfessionsRealtime'
 import { useAuthStore } from '@/store/auth'
 
@@ -193,6 +194,7 @@ export default function ConfessionsPage() {
   const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>('all')
   const [feedSort, setFeedSort] = useState<FeedSort>('new')
   const [postOpen, setPostOpen] = useState(false)
+  const [isFullyAnonymous, setIsFullyAnonymous] = useState(true)
   const [content, setContent] = useState('')
   const [postCategory, setPostCategory] = useState<Category>('confession')
   const [bannerDismissed, setBannerDismissed] = useState(false)
@@ -363,7 +365,7 @@ export default function ConfessionsPage() {
   ])
 
   const createMutation = useMutation({
-    mutationFn: (payload: { content: string; category: Category }) =>
+    mutationFn: (payload: { content: string; category: Category; isFullyAnonymous: boolean }) =>
       apiFetch<CreateConfessionResponse>('/api/confessions', {
         method: 'POST',
         body: JSON.stringify(payload),
@@ -631,7 +633,7 @@ export default function ConfessionsPage() {
   function handleSubmitPost() {
     const trimmed = content.trim()
     if (!trimmed) return
-    createMutation.mutate({ content: trimmed, category: postCategory })
+    createMutation.mutate({ content: trimmed, category: postCategory, isFullyAnonymous })
   }
 
   function getCommentDeleteKey(confessionId: string, commentId: string) {
@@ -847,14 +849,9 @@ export default function ConfessionsPage() {
 
             <div>
               {confessionsQuery.isLoading && (
-                <div className="space-y-2">
+                <div className="space-y-0">
                   {safeArray(Array.from({ length: 3 })).map((_, idx) => (
-                    <div key={idx} className="overflow-hidden rounded-[12px] border border-[#2a2a2a]">
-                      <div className="flex h-[140px]">
-                        <div className="w-[44px] border-r border-[#2a2a2a] bg-[#111111]" />
-                        <div className="flex-1 animate-pulse bg-[#1a1a1a]" />
-                      </div>
-                    </div>
+                    <ConfessionSkeleton key={idx} />
                   ))}
                 </div>
               )}
@@ -1193,9 +1190,9 @@ export default function ConfessionsPage() {
               <div ref={loadMoreRef} className="h-4" />
 
               {confessionsQuery.isFetchingNextPage && (
-                <div className="space-y-2">
+                <div className="space-y-0 mt-4">
                   {safeArray(Array.from({ length: 2 })).map((_, idx) => (
-                    <div key={idx} className="h-24 animate-pulse rounded-xl border border-[#2a2a2a] bg-[#1a1a1a]" />
+                    <ConfessionSkeleton key={idx} />
                   ))}
                 </div>
               )}
@@ -1309,6 +1306,37 @@ export default function ConfessionsPage() {
                 })}
               </select>
               <span className="text-xs text-white/45">{content.length}/500</span>
+            </div>
+
+            <div className="mt-4 rounded-lg border border-[#2a2a2a] bg-[#111111] p-3">
+              <div className="flex items-center justify-between">
+                <div className="pr-4">
+                  <p className="text-sm font-medium text-white">Fully anonymous mode</p>
+                  <p className="mt-0.5 text-xs text-gray-400">
+                    {isFullyAnonymous
+                      ? "No user ID stored. Moderated via IP hash only."
+                      : "Pseudonymous. Account ID linked for moderation but hidden from public."}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={isFullyAnonymous}
+                  onClick={() => setIsFullyAnonymous(!isFullyAnonymous)}
+                  className={cn(
+                    "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 focus:ring-offset-[#1a1a1a]",
+                    isFullyAnonymous ? "bg-indigo-600" : "bg-[#2a2a2a]"
+                  )}
+                >
+                  <span
+                    aria-hidden="true"
+                    className={cn(
+                      "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
+                      isFullyAnonymous ? "translate-x-5" : "translate-x-0"
+                    )}
+                  />
+                </button>
+              </div>
             </div>
 
             <Button

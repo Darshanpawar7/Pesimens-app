@@ -46,8 +46,8 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     queryKey: ['messages-unread-count'],
     queryFn: () => apiFetch<{ unread_count: number }>('/api/messages/unread-count'),
     enabled: unreadPollingActive,
-    staleTime: adaptiveStaleTime(3 * 60 * 1000, 'interactive'), // 3 minutes
-    refetchInterval: () => (unreadPollingActive ? adaptiveRefetchIntervalWhenActive(3 * 60 * 1000, 'interactive') : false), // 3 minutes instead of 30 seconds
+    staleTime: adaptiveStaleTime(3 * 60 * 1000, 'interactive'),
+    refetchInterval: () => (unreadPollingActive ? adaptiveRefetchIntervalWhenActive(3 * 60 * 1000, 'interactive') : false),
     refetchOnWindowFocus: unreadPollingActive && adaptiveRefetchOnWindowFocus(true, 'interactive'),
     refetchOnReconnect: unreadPollingActive && adaptiveRefetchOnReconnect(true, 'interactive'),
   })
@@ -98,27 +98,28 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         collapsed ? 'w-16' : 'w-56'
       )}
       style={{ background: '#111111', borderColor: '#2a2a2a' }}
+      aria-label="Main navigation"
     >
       {/* Logo */}
       <div className={cn('flex items-center gap-2 px-4 py-4 border-b', collapsed && 'justify-center px-2')} style={{ borderColor: '#2a2a2a' }}>
         {!collapsed && (
-          <span className="inline-flex items-center gap-2 font-semibold text-sm tracking-tight text-white">
+          <span className="inline-flex items-center gap-2 font-semibold text-sm tracking-tight text-white select-none">
             <img src="/app-logo.jpeg" alt="PESimens logo" className="h-6 w-6 rounded-full object-cover" />
-            PESimens <span className="text-[#6366f1]">•</span>
+            PESimens <span className="text-[#6366f1]" aria-hidden="true">•</span>
           </span>
         )}
         {collapsed && <img src="/app-logo.jpeg" alt="PESimens logo" className="h-8 w-8 rounded-full object-cover" />}
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 py-4 space-y-1 px-2 overflow-y-auto">
+      <nav className="flex-1 py-4 space-y-1 px-2 overflow-y-auto" aria-label="Sidebar navigation">
         {mainNavItems.map(({ to, icon, label }) => (
           <NavLink
             key={to}
             to={to}
             end={to === '/'}
             className={({ isActive }) => cn(
-              'flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-semibold transition-colors',
+              'flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500',
               isActive
                 ? 'bg-[#6366f1]/15 text-white ring-1 ring-[#6366f1]/25'
                 : 'text-white/60 hover:bg-[rgba(255,255,255,0.04)] hover:text-white/85',
@@ -168,7 +169,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             key={`pesu-${to}`}
             to={to}
             className={({ isActive }) => cn(
-              'flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-semibold transition-colors',
+              'flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500',
               isActive
                 ? 'bg-[#6366f1]/15 text-white ring-1 ring-[#6366f1]/25'
                 : 'text-white/60 hover:bg-[rgba(255,255,255,0.04)] hover:text-white/85',
@@ -183,7 +184,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                 <>
                   <span className="relative inline-flex">
                     <Icon className={cn('h-5 w-5 shrink-0', isActive ? 'text-[#6366f1]' : 'text-white/55')} />
-                    {showAlert && <span className="absolute -right-1.5 -top-1.5 h-2.5 w-2.5 animate-pulse rounded-full bg-red-500" />}
+                    {showAlert && <span className="absolute -right-1.5 -top-1.5 h-2.5 w-2.5 animate-pulse rounded-full bg-red-500" aria-label="Alert" />}
                   </span>
                   {!collapsed && <span>{label}</span>}
                 </>
@@ -194,7 +195,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
         {!collapsed && syncState === 'syncing' && (
           <div className="mt-1 flex items-center gap-2 px-3 py-1.5 text-xs text-white/50">
-            <span className="h-3 w-3 animate-spin rounded-full border border-white/25 border-t-white/70" />
+            <span className="h-3 w-3 animate-spin rounded-full border border-white/25 border-t-white/70" aria-hidden="true" />
             <span>Syncing...</span>
           </div>
         )}
@@ -223,7 +224,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             key={to}
             to={to}
             className={({ isActive }) => cn(
-              'flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-semibold transition-colors',
+              'flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500',
               isActive
                 ? 'bg-[#6366f1]/15 text-white ring-1 ring-[#6366f1]/25'
                 : 'text-white/60 hover:bg-[rgba(255,255,255,0.04)] hover:text-white/85',
@@ -242,7 +243,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                       <span className="relative inline-flex">
                         <Icon className={cn('h-5 w-5 shrink-0', isActive ? 'text-[#6366f1]' : 'text-white/55')} />
                         {to === '/messages' && unreadCount > 0 && (
-                          <span className="absolute -right-1.5 -top-1.5 h-2.5 w-2.5 rounded-full bg-red-500" />
+                          <span className="absolute -right-1.5 -top-1.5 h-2.5 w-2.5 rounded-full bg-red-500" aria-label={`${unreadCount} unread messages`} />
                         )}
                       </span>
                     )
@@ -252,7 +253,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                   <span className="flex min-w-0 items-center gap-2">
                     <span>{label}</span>
                     {to === '/messages' && unreadCount > 0 && (
-                      <span className="inline-flex min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 py-0.5 text-[10px] font-semibold text-white">
+                      <span className="inline-flex min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 py-0.5 text-[10px] font-semibold text-white" aria-hidden="true">
                         {unreadCount}
                       </span>
                     )}
@@ -266,7 +267,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           <NavLink
             to="/admin"
             className={({ isActive }) => cn(
-              'flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-semibold transition-colors',
+              'flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500',
               isActive
                 ? 'bg-red-500/15 text-red-200 ring-1 ring-red-500/25'
                 : 'text-white/60 hover:bg-[rgba(255,255,255,0.04)] hover:text-white/85',
@@ -284,7 +285,11 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       <div className="border-t p-2 space-y-1" style={{ borderColor: '#2a2a2a' }}>
         {!collapsed && user && (
           <>
-            <Link to="/profile" style={{ textDecoration: 'none' }}>
+            <Link
+              to="/profile"
+              style={{ textDecoration: 'none' }}
+              className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded-lg block"
+            >
               <div className="flex items-center gap-2 px-2 py-2 rounded-lg cursor-pointer hover:bg-[#2a2a2a] transition-colors border bg-white/3" style={{ borderColor: '#2a2a2a' }}>
                 <UserAvatar name={user.display_name} avatarUrl={user.avatar_url} size="sm" />
                 <div className="min-w-0">
@@ -295,7 +300,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             </Link>
             <button
               onClick={() => setAboutOpen(true)}
-              className="w-full rounded-lg border border-[#2a2a2a] bg-[#0f0f0f] px-2 py-1.5 text-left text-xs text-white/65 transition-colors hover:bg-white/5 hover:text-white/85"
+              className="w-full rounded-lg border border-[#2a2a2a] bg-[#0f0f0f] px-2 py-1.5 text-left text-xs text-white/65 transition-colors hover:bg-white/5 hover:text-white/85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
             >
               About PESimens
             </button>
@@ -306,14 +311,14 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             to="/profile"
             title="View Profile"
             aria-label="View Profile"
-            className="flex items-center justify-center rounded-xl p-2 transition-colors hover:bg-white/5"
+            className="flex items-center justify-center rounded-xl p-2 transition-colors hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
           >
-              <UserAvatar name={user.display_name} avatarUrl={user.avatar_url} size="sm" />
+            <UserAvatar name={user.display_name} avatarUrl={user.avatar_url} size="sm" />
           </Link>
         )}
         <button
           onClick={onToggle}
-          className="flex items-center justify-center w-full p-2 rounded-xl text-white/45 hover:bg-white/5 hover:text-white/70 transition-colors"
+          className="flex items-center justify-center w-full p-2 rounded-xl text-white/45 hover:bg-white/5 hover:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
           aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
           {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
@@ -321,7 +326,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       </div>
 
       {aboutOpen && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-label="About PESimens">
           <button className="absolute inset-0 bg-black/70" onClick={() => setAboutOpen(false)} aria-label="Close about modal" />
           <section className="relative w-full max-w-md rounded-2xl border border-[#2a2a2a] bg-[#151515] p-5 text-white shadow-[0_30px_80px_-45px_rgba(0,0,0,1)]">
             <div className="mb-4 flex items-start justify-between">
@@ -331,7 +336,8 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
               </div>
               <button
                 onClick={() => setAboutOpen(false)}
-                className="rounded-full border border-[#2a2a2a] px-2 py-1 text-xs text-white/60 hover:bg-white/5"
+                className="rounded-full border border-[#2a2a2a] px-2 py-1 text-xs text-white/60 hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                aria-label="Close about modal"
               >
                 Close
               </button>
@@ -346,11 +352,11 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             <p className="mt-4 text-sm text-white/70">This is a student-built, student-run app. We are not affiliated with or monitored by PESU University.</p>
             <p className="mt-3 text-sm text-white/70">Confessions and posts are stored with a random ID, never your SRN or name.</p>
 
-            <a
+            
               href="https://github.com/Darshanpawar7/pesimens-app"
               target="_blank"
               rel="noreferrer"
-              className="mt-5 inline-flex rounded-lg border border-[#2a2a2a] bg-[#0f0f0f] px-3 py-2 text-sm text-white/80 hover:bg-white/5"
+              className="mt-5 inline-flex rounded-lg border border-[#2a2a2a] bg-[#0f0f0f] px-3 py-2 text-sm text-white/80 hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
             >
               View on GitHub
             </a>

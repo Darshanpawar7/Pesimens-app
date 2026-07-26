@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { UserCheck, Users } from 'lucide-react'
 import { apiFetch } from '@/lib/api'
 import { UserAvatar } from '@/components/ui/avatar'
+import { PersonSkeleton } from '@/components/ui/skeleton'
 import { KarmaBadge } from '@/components/common/KarmaBadge'
 import { FollowButton } from '@/components/common/FollowButton'
 import { Link, useSearchParams } from 'react-router-dom'
@@ -129,7 +130,10 @@ export default function PeoplePage() {
             </div>
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {people.map(person => (
+              {query.isLoading ? (
+                Array.from({ length: 6 }).map((_, i) => <PersonSkeleton key={i} />)
+              ) : (
+                people.map(person => (
                 <div key={person.id} className="rounded-2xl border border-[#2a2a2a] bg-[#1a1a1a] p-4">
                   <div className="flex items-center gap-3">
                     <UserAvatar name={person.display_name} avatarUrl={person.avatar_url} className="h-14 w-14" />
@@ -165,10 +169,10 @@ export default function PeoplePage() {
                     )}
                   </div>
                 </div>
-              ))}
+              )))}
             </div>
 
-            {people.length === 0 && (
+            {!query.isLoading && people.length === 0 && (
               <p className="py-12 text-center text-sm text-white/60">No people found for current filters.</p>
             )}
           </>

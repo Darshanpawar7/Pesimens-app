@@ -124,6 +124,15 @@ export function SellNoteModal({ open, onClose, onSuccess }: Props) {
           <div
             className="cursor-pointer rounded-lg border border-dashed border-[#2a2a2a] bg-[#0f0f0f] p-4 text-center text-sm text-white/60 hover:border-[#6366f1]/60"
             onClick={() => fileRef.current?.click()}
+            role="button"
+            aria-label="Upload file dropzone"
+            tabIndex={0}
+            onKeyDown={e => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                fileRef.current?.click()
+              }
+            }}
           >
             <input
               ref={fileRef}

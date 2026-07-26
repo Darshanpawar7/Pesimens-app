@@ -1,6 +1,7 @@
 import { useEffect, useRef, useCallback } from 'react'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { PYQCard, type PYQ } from './PYQCard'
+import { PYQSkeleton } from '../ui/skeleton'
 import { apiFetch } from '@/lib/api'
 import { usePYQRealtime } from '@/hooks/usePYQRealtime'
 
@@ -16,6 +17,7 @@ interface Filters {
   exam_type?: string
   year?: string
   tag?: string
+  difficulty?: string
   sort?: 'recent' | 'upvotes'
 }
 
@@ -33,6 +35,7 @@ function buildUrl(filters: Filters, cursor?: string) {
   if (filters.exam_type) params.set('exam_type', filters.exam_type)
   if (filters.year) params.set('year', filters.year)
   if (filters.tag) params.set('tag', filters.tag)
+  if (filters.difficulty) params.set('difficulty', filters.difficulty)
   if (filters.sort) params.set('sort', filters.sort)
   if (cursor) params.set('cursor', cursor)
   const qs = params.toString()
@@ -72,12 +75,9 @@ export function PYQFeed({ filters = {}, canDeletePyq = false, onDeletePyq, delet
 
   if (isLoading) {
     return (
-      <div className="space-y-3">
+      <div className="space-y-0">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div
-            key={i}
-            className="h-32 rounded-lg border border-[#2a2a2a] bg-gradient-to-br from-[#1a1a1a] to-[#141414] animate-pulse"
-          />
+          <PYQSkeleton key={i} />
         ))}
       </div>
     )
@@ -117,12 +117,9 @@ export function PYQFeed({ filters = {}, canDeletePyq = false, onDeletePyq, delet
       <div ref={sentinelRef} className="h-4" />
 
       {isFetchingNextPage && (
-        <div className="space-y-3">
+        <div className="space-y-0 mt-2">
           {Array.from({ length: 2 }).map((_, i) => (
-            <div
-              key={i}
-              className="h-32 rounded-lg border border-[#2a2a2a] bg-gradient-to-br from-[#1a1a1a] to-[#141414] animate-pulse"
-            />
+            <PYQSkeleton key={i} />
           ))}
         </div>
       )}

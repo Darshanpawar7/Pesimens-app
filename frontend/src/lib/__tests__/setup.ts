@@ -35,6 +35,10 @@ Object.defineProperty(window, 'sessionStorage', {
   value: sessionStorageMock,
 })
 
+Object.defineProperty(window, 'localStorage', {
+  value: sessionStorageMock,
+})
+
 // jsdom does not implement matchMedia; many responsive UI components rely on it.
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
@@ -48,6 +52,18 @@ Object.defineProperty(window, 'matchMedia', {
     removeEventListener: vi.fn(),
     dispatchEvent: vi.fn(),
   })),
+})
+
+// Mock IntersectionObserver
+class IntersectionObserverMock {
+  observe = vi.fn()
+  unobserve = vi.fn()
+  disconnect = vi.fn()
+}
+Object.defineProperty(window, 'IntersectionObserver', {
+  writable: true,
+  configurable: true,
+  value: IntersectionObserverMock,
 })
 
 // Clear mocks before each test

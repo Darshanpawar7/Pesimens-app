@@ -40,9 +40,9 @@ export const CHESS_FEATURES = {
   ai: true,
 
   // ── Phase 2: Multiplayer & Engagement ─────────────────────────────────────
-  multiplayer: false,
-  leaderboard: false,
-  stats: false,
+  multiplayer: true,
+  leaderboard: true,
+  stats: true,
 
   // ── Phase 3: Discovery & Social Lite ──────────────────────────────────────
   dailyChallenge: false,
@@ -51,9 +51,9 @@ export const CHESS_FEATURES = {
 
   // ── Phase 4: Full Social ───────────────────────────────────────────────────
   friends: false,
-  invites: false,
+  invites: true,
   chat: false,
-  presence: false,
+  presence: true,
   activityFeed: false,
 } as const
 
