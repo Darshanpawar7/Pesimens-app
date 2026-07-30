@@ -14,46 +14,13 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['icon-192.svg', 'icon-512.svg'],
+      includeAssets: ['icon-192.svg', 'icon-512.svg', 'offline.html'],
       manifest: false, // we use our own public/manifest.json
-      workbox: {
-        // Take over immediately on update so stale SWs don't serve old cached
-        // index.html for new hashed JS filenames (causes MIME type errors).
-        skipWaiting: true,
-        clientsClaim: true,
-        globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.ts',
+      injectManifest: {
         maximumFileSizeToCacheInBytes: 4 * 1024 * 1024, // 4MB — large bundle due to recharts + react-pdf
-        // Only fall back to index.html for navigation requests, never for assets.
-        // Without this, a stale SW returns index.html (text/html) for new JS chunk
-        // filenames it doesn't recognise, breaking module script loading.
-        navigateFallback: '/index.html',
-        navigateFallbackDenylist: [/^\/api\//, /^\/assets\//],
-        runtimeCaching: [
-          {
-            urlPattern: /^\/api\/pyqs/,
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'pyqs-cache',
-              expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 * 24 },
-            },
-          },
-          {
-            urlPattern: /^\/api\/analytics/,
-            handler: 'StaleWhileRevalidate',
-            options: {
-              cacheName: 'analytics-cache',
-              expiration: { maxEntries: 20, maxAgeSeconds: 60 * 60 },
-            },
-          },
-          {
-            urlPattern: /^\/api\/tags/,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'tags-cache',
-              expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 },
-            },
-          },
-        ],
       },
     }),
   ],

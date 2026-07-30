@@ -352,13 +352,16 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             <p className="mt-4 text-sm text-white/70">This is a student-built, student-run app. We are not affiliated with or monitored by PESU University.</p>
             <p className="mt-3 text-sm text-white/70">Confessions and posts are stored with a random ID, never your SRN or name.</p>
 
-            
-              href="https://github.com/Darshanpawar7/pesimens-app"
-              target="_blank"
-              rel="noreferrer"
-              className="mt-5 inline-flex rounded-lg border border-[#2a2a2a] bg-[#0f0f0f] px-3 py-2 text-sm text-white/80 hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
-            >
-              View on GitHub
+          
+          
+          <a
+            href="https://github.com/Darshanpawar7/pesimens-app"
+            target="_blank"
+            rel="noreferrer"
+            className="mt-5 inline-flex rounded-lg border border-[#2a2a2a] bg-[#0f0f0f] px-3 py-2 text-sm text-white/80 hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+          >
+            View on GitHub
+             
             </a>
           </section>
         </div>
