@@ -69,6 +69,7 @@
     "typescript": "^5.3.3",
     "vite": "^5.0.8",
     "vite-plugin-pwa": "^1.2.0",
-    "vitest": "^4.1.2"
+    "vitest": "^4.1.2",
+    "workbox-recipes": "^7.4.1"
   }
 }
