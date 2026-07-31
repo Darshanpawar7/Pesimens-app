@@ -25,7 +25,7 @@ const lazyImport = (importFn: () => Promise<any>) => {
       return mod
     } catch (error) {
       if (error instanceof TypeError && error.message.includes('Failed to fetch dynamically imported module')) {
-        const reloadCount = parseInt(sessionStorage.getItem('chunk_reload_count') || '0', 10)
+        const reloadCount = parseInt(sessionStorage.getItem('chunk_reload_count', 10) || '0', 10)
         if (reloadCount < 2) {
           sessionStorage.setItem('chunk_reload_count', String(reloadCount + 1))
           window.location.reload()
