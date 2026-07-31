@@ -51,7 +51,7 @@ type PesimensAccessTokenClaims = {
 }
 
 function normalizeSemester(value: unknown): number | null {
-  const parsed = typeof value === 'number' ? value : Number.parseInt(String(value ?? ''), 10)
+  const parsed = typeof value === 'number' ? value : Number.parseInt(String(value ?? '', 10), 10)
   if (!Number.isFinite(parsed)) return null
   if (parsed < 1 || parsed > 12) return null
   return parsed
