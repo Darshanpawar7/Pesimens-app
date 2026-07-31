@@ -88,7 +88,7 @@ export function BookingForm({ mentor, onSuccess, onCancel }: Props) {
         current = new Date(current.getTime() + 30 * 60000)
       }
     }
-    return times.sort()
+    return times.sort((a, b) => a - b)
   }, [selectedDate, availData, duration])
 
   // Deselect time if it's no longer available when duration changes
