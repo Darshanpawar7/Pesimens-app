@@ -213,7 +213,7 @@ export function BookingForm({ mentor, onSuccess, onCancel }: Props) {
               <p className="text-xs text-white/40 text-center py-8">No {duration}-min slots available on this date</p>
             ) : (
               <div className="grid grid-cols-2 gap-2 max-h-[220px] overflow-y-auto pr-1 custom-scrollbar">
-                {availableTimes.map(time => (
+                {(availableTimes ?? []).map(time => (
                   <button
                     key={time}
                     type="button"
