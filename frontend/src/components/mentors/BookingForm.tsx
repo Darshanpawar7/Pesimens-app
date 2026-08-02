@@ -88,7 +88,7 @@ export function BookingForm({ mentor, onSuccess, onCancel }: Props) {
         current = new Date(current.getTime() + 30 * 60000)
       }
     }
-    return times.sort()
+    return times.sort((a, b) => a - b)
   }, [selectedDate, availData, duration])
 
   // Deselect time if it's no longer available when duration changes
@@ -170,7 +170,7 @@ export function BookingForm({ mentor, onSuccess, onCancel }: Props) {
       <div className="space-y-1">
         <Label>Duration</Label>
         <div className="flex gap-2">
-          {DURATIONS.map(d => (
+          {(DURATIONS ?? []).map(d => (
             <button
               key={d}
               type="button"
@@ -213,7 +213,7 @@ export function BookingForm({ mentor, onSuccess, onCancel }: Props) {
               <p className="text-xs text-white/40 text-center py-8">No {duration}-min slots available on this date</p>
             ) : (
               <div className="grid grid-cols-2 gap-2 max-h-[220px] overflow-y-auto pr-1 custom-scrollbar">
-                {availableTimes.map(time => (
+                {(availableTimes ?? []).map(time => (
                   <button
                     key={time}
                     type="button"
