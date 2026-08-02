@@ -92,7 +92,7 @@ function Confetti() {
   return (
     <>
       <style>{CONFETTI_STYLE}</style>
-      {pieces.map((p) => (
+      {(pieces ?? []).map((p) => (
         <ConfettiPiece key={p.id} left={p.left} delay={p.delay} duration={p.duration} color={p.color} />
       ))}
     </>

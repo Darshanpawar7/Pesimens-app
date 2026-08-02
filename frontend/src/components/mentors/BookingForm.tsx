@@ -170,7 +170,7 @@ export function BookingForm({ mentor, onSuccess, onCancel }: Props) {
       <div className="space-y-1">
         <Label>Duration</Label>
         <div className="flex gap-2">
-          {DURATIONS.map(d => (
+          {(DURATIONS ?? []).map(d => (
             <button
               key={d}
               type="button"

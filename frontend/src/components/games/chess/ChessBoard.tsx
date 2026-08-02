@@ -123,7 +123,7 @@ export function ChessBoard({ readOnly = false }: ChessBoardProps) {
           touchAction: 'manipulation',
         }}
       >
-        {squares.map((square) => {
+        {(squares ?? []).map((square) => {
           const file = square[0]
           const rank = square[1]
           const fileIndex = FILES.indexOf(file)
