@@ -92,7 +92,7 @@ function Confetti() {
   return (
     <>
       <style>{CONFETTI_STYLE}</style>
-      {pieces.map((p) => (
+      {(pieces ?? []).map((p) => (
         <ConfettiPiece key={p.id} left={p.left} delay={p.delay} duration={p.duration} color={p.color} />
       ))}
     </>
@@ -253,92 +253,4 @@ export function StreakDisplay({ userId, onViewStats }: StreakDisplayProps) {
       .eq('user_id', userId)
       .maybeSingle()
       .then(({ data }) => {
-        setStats(data ?? null)
-        setLoading(false)
-      })
-  }, [userId])
-
-  if (loading || !stats || stats.win_streak === 0) return null
-
-  prevBestRef.current = stats.best_streak
-
-  const newBest = stats.win_streak >= stats.best_streak && stats.win_streak > 1
-
-  return (
-    <button
-      onClick={onViewStats}
-      style={{
-        width: '100%',
-        padding: '12px 16px',
-        borderRadius: 12,
-        background: newBest
-          ? 'linear-gradient(135deg, rgba(245,158,11,0.15), rgba(99,102,241,0.1))'
-          : 'rgba(99,102,241,0.08)',
-        border: `1px solid ${newBest ? 'rgba(245,158,11,0.4)' : 'rgba(99,102,241,0.2)'}`,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        cursor: onViewStats ? 'pointer' : 'default',
-        boxSizing: 'border-box',
-        textAlign: 'left',
-      }}
-      aria-label={`Win streak: ${stats.win_streak} games`}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <span style={{ fontSize: 20 }}>🔥</span>
-        <div>
-          <p style={{ fontSize: 14, fontWeight: 700, color: '#e5e7eb', margin: 0 }}>
-            {stats.win_streak} game win streak!
-          </p>
-          {newBest && (
-            <p style={{ fontSize: 11, color: '#fbbf24', margin: '2px 0 0', fontWeight: 600 }}>
-              🏆 Personal best!
-            </p>
-          )}
-        </div>
-      </div>
-      {onViewStats && (
-        <span style={{ fontSize: 12, color: '#6366f1', fontWeight: 600 }}>
-          Stats →
-        </span>
-      )}
-    </button>
-  )
-}
-
-// ─── 4. ComeBackTomorrow ──────────────────────────────────────────────────────
-
-/**
- * Shown after a game completes.
- * Displays "New daily challenge tomorrow!" with a live countdown to midnight UTC.
- */
-export function ComeBackTomorrow() {
-  const [msLeft, setMsLeft] = useState(msUntilMidnightUtc)
-
-  useEffect(() => {
-    const id = setInterval(() => setMsLeft(msUntilMidnightUtc()), 1000)
-    return () => clearInterval(id)
-  }, [])
-
-  return (
-    <div
-      style={{
-        padding: '10px 16px',
-        borderRadius: 10,
-        background: 'rgba(99,102,241,0.08)',
-        border: '1px solid rgba(99,102,241,0.2)',
-        textAlign: 'center',
-      }}
-    >
-      <p style={{ fontSize: 13, color: '#a5b4fc', fontWeight: 600, margin: '0 0 4px' }}>
-        📅 New daily challenge tomorrow!
-      </p>
-      <p style={{ fontSize: 12, color: '#6b7280', margin: 0 }}>
-        Next challenge in{' '}
-        <span style={{ color: '#e5e7eb', fontWeight: 700, fontVariantNumeric: 'tabular-nums' }}>
-          {formatCountdown(msLeft)}
-        </span>
-      </p>
-    </div>
-  )
-}
+      .catch(err => console.error(err))
