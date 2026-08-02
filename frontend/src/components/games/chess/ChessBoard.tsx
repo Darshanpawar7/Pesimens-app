@@ -123,11 +123,11 @@ export function ChessBoard({ readOnly = false }: ChessBoardProps) {
           touchAction: 'manipulation',
         }}
       >
-        {squares.map((square) => {
+        {(squares ?? []).map((square) => {
           const file = square[0]
           const rank = square[1]
           const fileIndex = FILES.indexOf(file)
-          const rankIndex = parseInt(rank)
+          const rankIndex = parseInt(rank, 10)
 
           const isLight = (fileIndex + rankIndex) % 2 === 0
           const piece = chess.get(square as any) ?? null
