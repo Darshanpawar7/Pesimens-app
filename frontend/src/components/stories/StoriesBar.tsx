@@ -178,6 +178,8 @@ export function StoriesBar() {
         .map(item => ({
           storyId: item.storyId as string,
           attempts: typeof item.attempts === 'number' ? item.attempts : 0,
+          // duplicate key removed
+
           nextRetryAt: typeof item.nextRetryAt === 'number' ? item.nextRetryAt : Date.now(),
         }))
     } catch {
