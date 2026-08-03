@@ -508,7 +508,7 @@ export function StoriesBar() {
   }
 
   function handleTouchEnd(event: TouchEvent<HTMLDivElement>) {
-    if (touchStartY.current == null) return
+    if (touchStartY.current === null) return
     const endY = event.changedTouches[0]?.clientY ?? touchStartY.current
     const deltaY = endY - touchStartY.current
 
