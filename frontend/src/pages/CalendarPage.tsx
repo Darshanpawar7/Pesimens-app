@@ -861,3 +861,5 @@ export default function CalendarPage() {
     </div>
   )
 }
+
+.catch(err => console.error("Promise.all failed:", err));
