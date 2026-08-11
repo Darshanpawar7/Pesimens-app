@@ -18,7 +18,7 @@ flowchart LR
 
 1. **Find an Issue:** Browse open issues with the [`good first issue`](https://github.com/Darshanpawar7/Pesimens-app/labels/good%20first%20issue) or [`gssoc2026`](https://github.com/Darshanpawar7/Pesimens-app/labels/gssoc2026) label. If you found a new bug or improvement, [open a new issue](https://github.com/Darshanpawar7/Pesimens-app/issues/new) first.
 2. **Request Assignment:** Comment on the issue to request assignment (e.g., `"Hi @maintainer, I would like to work on this issue. /assign"`). Wait for the bot/maintainer to assign the issue to you before writing code.
-3. **Create a Feature Branch:** Fork the repository and create a descriptive branch:
+3. **Create a Feature Branch:** Fork the repository, branch from `dev`, and create a descriptive branch:
    ```bash
    git checkout -b fix/landing-page-spacing
    # or
@@ -54,7 +54,7 @@ flowchart LR
 
 ### Task 1.1: Improve Landing Page Mobile Breakpoints
 * **Target File:** `frontend/src/pages/LandingPage.tsx`
-* **What to do:** Add `sm:`, `md:`, and `lg:` Tailwind breakpoint classes so that hero sections, feature grids, and social proof counters wrap cleanly on mobile screens (`< 640px`).
+* **What to do:** Use unprefixed Tailwind classes for the mobile baseline layout (`320px–480px`), then add `sm:`, `md:`, and `lg:` overrides for larger viewports.
 * **Acceptance Criteria:**
   - [ ] No horizontal scrollbars on mobile viewport widths (320px – 480px).
   - [ ] Hero CTA buttons stack vertically on mobile.
@@ -100,8 +100,9 @@ flowchart LR
 * **Target Files:** `frontend/src/components/ui/`, `frontend/src/components/layout/TopNav.tsx`
 * **What to do:** Ensure all interactive dropdowns, modals, and navigation links are accessible via keyboard (`Tab`, `Enter`, `Escape`) and have visible focus rings (`focus-visible:ring-2`).
 * **Acceptance Criteria:**
-  - [ ] Modals can be dismissed using the `Escape` key.
-  - [ ] Focus rings are visible when tabbing through navigation.
+  - [ ] All navigation links and buttons are reachable via `Tab` and display a visible focus ring (`focus-visible:ring-2`).
+  - [ ] Dropdowns and menus can be opened, navigated, and selected using keyboard keys (`Enter`, `Space`, and arrow keys).
+  - [ ] Modals trap focus appropriately and can be dismissed using the `Escape` key.
 
 ---
 
@@ -146,8 +147,8 @@ flowchart LR
 
 Before submitting your PR, double check the following:
 
-- [ ] **Branching:** Created a branch off `main` / `dev` with a descriptive name.
+- [ ] **Branching:** Created a branch off `dev` with a descriptive name.
 - [ ] **Scope:** The PR addresses only the assigned issue.
-- [ ] **Local Verification:** Verified `npm run dev`, `npm run lint`, and `npm run test` pass locally.
+- [ ] **Local Verification:** Verified `npm run dev`, `npm run lint`, `npm run test`, and `npm run build` pass locally.
 - [ ] **Visual Proof:** Attached before/after screenshots or screen recordings for all UI changes.
 - [ ] **Issue Linked:** Added `Closes #<issue-id>` in the PR description.
