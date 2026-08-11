@@ -59,6 +59,15 @@ describe('AIChatPanel', () => {
       await userEvent.click(screen.getByRole('button', { name: /close/i }))
       expect(onClose).toHaveBeenCalledOnce()
     })
+
+    it('closes when Escape is pressed', async () => {
+      const onClose = vi.fn()
+      render(<AIChatPanel {...defaultProps} onClose={onClose} />)
+
+      await userEvent.keyboard('{Escape}')
+
+      expect(onClose).toHaveBeenCalledOnce()
+    })
   })
 
   // Req 17.2 — accepts taskType, context, onClose props
