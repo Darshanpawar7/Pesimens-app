@@ -5,12 +5,14 @@ import { TopNav } from './TopNav'
 import { BottomNav } from './BottomNav'
 import { useRealtimeNotifications } from '../../hooks/useRealtimeNotifications'
 import { StoriesBar } from '../stories/StoriesBar'
+import { ScrollToTop } from '../common/ScrollToTop'
 
 export function Layout() {
   const location = useLocation()
   const [collapsed, setCollapsed] = useState(false)
   const [isBottomNavVisible, setIsBottomNavVisible] = useState(true)
   const lastScrollTop = useRef(0)
+  const mainRef = useRef<HTMLElement>(null)
 
   const showStories = location.pathname === '/'
   const isMessagesRoute = location.pathname.startsWith('/messages')
@@ -47,18 +49,20 @@ export function Layout() {
   return (
     <div className="flex h-dvh min-h-screen min-h-dvh bg-[#0f0f0f] overflow-hidden">
       <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(c => !c)} />
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
         <TopNav />
         {showStories && (
           <div className="sticky top-14 z-20 bg-[#111111] lg:static">
             <StoriesBar />
           </div>
         )}
-        <main onScroll={handleMainScroll} className={`${shouldRenderMobileNavOffset ? 'mobile-nav-offset' : ''} flex-1 overflow-y-auto overscroll-contain bg-[#0f0f0f] lg:pb-0`} style={{ WebkitOverflowScrolling: 'touch' }}>
+        <main ref={mainRef} onScroll={handleMainScroll} className={`${shouldRenderMobileNavOffset ? 'mobile-nav-offset' : ''} flex-1 overflow-y-auto overscroll-contain bg-[#0f0f0f] lg:pb-0`} style={{ WebkitOverflowScrolling: 'touch' }}>
           <Outlet />
         </main>
+        <ScrollToTop targetRef={mainRef} />
       </div>
       <BottomNav visible={isActiveChatView ? false : isBottomNavVisible} />
     </div>
   )
 }
+

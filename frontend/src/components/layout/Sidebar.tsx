@@ -352,7 +352,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             <p className="mt-4 text-sm text-white/70">This is a student-built, student-run app. We are not affiliated with or monitored by PESU University.</p>
             <p className="mt-3 text-sm text-white/70">Confessions and posts are stored with a random ID, never your SRN or name.</p>
 
-            
+            <a
               href="https://github.com/Darshanpawar7/pesimens-app"
               target="_blank"
               rel="noreferrer"
