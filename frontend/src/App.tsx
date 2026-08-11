@@ -95,7 +95,6 @@ function App() {
                   <Route path="/welcome" element={<LandingPage />} />
                   <Route path="/auth/callback" element={<AuthCallbackPage />} />
                   <Route path="/explore" element={<Suspense fallback={<PageLoader />}><ExplorePage /></Suspense>} />
-                  <Route path="/gpa-calculator" element={<Suspense fallback={<PageLoader />}><GpaCalculatorPage /></Suspense>} />
                   <Route path="/onboard" element={<ProtectedRoute><OnboardingPage /></ProtectedRoute>} />
                   <Route path="/trust-onboarding" element={<ProtectedRoute><Suspense fallback={<PageLoader />}><TrustOnboardingPage /></Suspense></ProtectedRoute>} />
 

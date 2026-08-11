@@ -190,13 +190,13 @@ export default function GpaCalculatorPage() {
     let status: 'impossible' | 'hard' | 'achievable' | 'easy' = 'achievable'
     let message = ''
 
-    if (rounded > 10.0) {
+    if (requiredSgpa > 10.0) {
       status = 'impossible'
       message = `Mathematically Impossible: You would need an SGPA of ${rounded.toFixed(2)} (maximum achievable is 10.00). Try adjusting your target CGPA or increasing credit load.`
-    } else if (rounded >= 8.5) {
+    } else if (requiredSgpa >= 8.5) {
       status = 'hard'
       message = `Ambitious Target: You need an SGPA of ${rounded.toFixed(2)} in the upcoming semester. Target 'S' and 'A' grades in high-credit courses!`
-    } else if (rounded >= 5.0) {
+    } else if (requiredSgpa >= 5.0) {
       status = 'achievable'
       message = `Very Achievable: Maintain a steady SGPA of ${rounded.toFixed(2)} in the upcoming semester to reach your goal.`
     } else {
@@ -231,9 +231,12 @@ export default function GpaCalculatorPage() {
           </div>
 
           {/* Navigation Tabs */}
-          <div className="mt-6 flex flex-wrap gap-2 rounded-xl border border-white/10 bg-[#16161a] p-1.5">
+          <div className="mt-6 flex flex-wrap gap-2 rounded-xl border border-white/10 bg-[#16161a] p-1.5" role="tablist" aria-label="Calculator Modes">
             <button
               type="button"
+              role="tab"
+              aria-selected={activeTab === 'sgpa'}
+              aria-label="SGPA Calculator"
               onClick={() => setActiveTab('sgpa')}
               className={`flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-all ${
                 activeTab === 'sgpa'
@@ -247,6 +250,9 @@ export default function GpaCalculatorPage() {
 
             <button
               type="button"
+              role="tab"
+              aria-selected={activeTab === 'cgpa'}
+              aria-label="CGPA Calculator"
               onClick={() => setActiveTab('cgpa')}
               className={`flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-all ${
                 activeTab === 'cgpa'
@@ -260,6 +266,9 @@ export default function GpaCalculatorPage() {
 
             <button
               type="button"
+              role="tab"
+              aria-selected={activeTab === 'target'}
+              aria-label="Target Predictor"
               onClick={() => setActiveTab('target')}
               className={`flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-all ${
                 activeTab === 'target'
@@ -287,6 +296,7 @@ export default function GpaCalculatorPage() {
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
+                      aria-label="Reset courses"
                       onClick={handleResetCourses}
                       className="flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/70 hover:bg-white/10 hover:text-white"
                       title="Reset to default courses"
@@ -296,6 +306,7 @@ export default function GpaCalculatorPage() {
                     </button>
                     <button
                       type="button"
+                      aria-label="Add Course"
                       onClick={handleAddCourse}
                       className="flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-indigo-500"
                     >
@@ -323,6 +334,7 @@ export default function GpaCalculatorPage() {
                       <div className="col-span-5 md:col-span-6">
                         <input
                           type="text"
+                          aria-label={`Course ${idx + 1} name`}
                           value={course.name}
                           onChange={e => handleCourseChange(course.id, 'name', e.target.value)}
                           placeholder={`Course ${idx + 1}`}
@@ -332,6 +344,7 @@ export default function GpaCalculatorPage() {
 
                       <div className="col-span-3 md:col-span-3">
                         <select
+                          aria-label={`Course ${idx + 1} credits`}
                           value={course.credits}
                           onChange={e => handleCourseChange(course.id, 'credits', Number(e.target.value))}
                           className="w-full rounded-lg border border-white/10 bg-black/40 px-3 py-1.5 text-sm text-white focus:border-indigo-500 focus:outline-none"
@@ -346,6 +359,7 @@ export default function GpaCalculatorPage() {
 
                       <div className="col-span-3 md:col-span-2">
                         <select
+                          aria-label={`Course ${idx + 1} grade`}
                           value={course.grade}
                           onChange={e => handleCourseChange(course.id, 'grade', e.target.value as GradeKey)}
                           className="w-full rounded-lg border border-white/10 bg-black/40 px-3 py-1.5 text-sm font-semibold text-indigo-400 focus:border-indigo-500 focus:outline-none"
@@ -363,6 +377,7 @@ export default function GpaCalculatorPage() {
                       <div className="col-span-1 text-right">
                         <button
                           type="button"
+                          aria-label={`Remove course ${idx + 1}`}
                           onClick={() => handleRemoveCourse(course.id)}
                           disabled={courses.length <= 1}
                           className="rounded-lg p-1.5 text-white/40 hover:bg-rose-500/10 hover:text-rose-400 disabled:opacity-20"
@@ -440,6 +455,7 @@ export default function GpaCalculatorPage() {
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
+                      aria-label="Reset semesters"
                       onClick={handleResetSemesters}
                       className="flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/70 hover:bg-white/10 hover:text-white"
                     >
@@ -448,6 +464,7 @@ export default function GpaCalculatorPage() {
                     </button>
                     <button
                       type="button"
+                      aria-label="Add Semester"
                       onClick={handleAddSemester}
                       disabled={semesters.length >= 8}
                       className="flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-indigo-500 disabled:opacity-50"
@@ -481,6 +498,7 @@ export default function GpaCalculatorPage() {
                           step="0.01"
                           min="0"
                           max="10"
+                          aria-label={`Semester ${idx + 1} SGPA`}
                           value={sem.sgpa}
                           onChange={e => handleSemesterChange(sem.id, 'sgpa', Number(e.target.value))}
                           placeholder="SGPA"
@@ -493,6 +511,7 @@ export default function GpaCalculatorPage() {
                           type="number"
                           min="1"
                           max="40"
+                          aria-label={`Semester ${idx + 1} credits`}
                           value={sem.credits}
                           onChange={e => handleSemesterChange(sem.id, 'credits', Number(e.target.value))}
                           placeholder="Credits"
@@ -503,6 +522,7 @@ export default function GpaCalculatorPage() {
                       <div className="col-span-1 text-right">
                         <button
                           type="button"
+                          aria-label={`Remove semester ${idx + 1}`}
                           onClick={() => handleRemoveSemester(sem.id)}
                           disabled={semesters.length <= 1}
                           className="rounded-lg p-1.5 text-white/40 hover:bg-rose-500/10 hover:text-rose-400 disabled:opacity-20"
@@ -561,12 +581,14 @@ export default function GpaCalculatorPage() {
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   {/* Current CGPA */}
                   <div className="rounded-xl border border-white/5 bg-black/40 p-4">
-                    <label className="block text-xs font-medium text-white/70 mb-1.5">Current CGPA</label>
+                    <label htmlFor="current-cgpa-input" className="block text-xs font-medium text-white/70 mb-1.5">Current CGPA</label>
                     <input
+                      id="current-cgpa-input"
                       type="number"
                       step="0.01"
                       min="0"
                       max="10"
+                      aria-label="Current CGPA"
                       value={currentCgpa}
                       onChange={e => setCurrentCgpa(Number(e.target.value))}
                       className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-base font-semibold text-white focus:border-indigo-500 focus:outline-none"
@@ -576,11 +598,13 @@ export default function GpaCalculatorPage() {
 
                   {/* Completed Credits */}
                   <div className="rounded-xl border border-white/5 bg-black/40 p-4">
-                    <label className="block text-xs font-medium text-white/70 mb-1.5">Completed Credits</label>
+                    <label htmlFor="completed-credits-input" className="block text-xs font-medium text-white/70 mb-1.5">Completed Credits</label>
                     <input
+                      id="completed-credits-input"
                       type="number"
                       min="1"
                       max="200"
+                      aria-label="Completed Credits"
                       value={completedCredits}
                       onChange={e => setCompletedCredits(Number(e.target.value))}
                       className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-base font-semibold text-white focus:border-indigo-500 focus:outline-none"
@@ -590,12 +614,14 @@ export default function GpaCalculatorPage() {
 
                   {/* Target CGPA */}
                   <div className="rounded-xl border border-indigo-500/20 bg-indigo-950/20 p-4">
-                    <label className="block text-xs font-medium text-indigo-300 mb-1.5">Desired Target CGPA</label>
+                    <label htmlFor="target-cgpa-input" className="block text-xs font-medium text-indigo-300 mb-1.5">Desired Target CGPA</label>
                     <input
+                      id="target-cgpa-input"
                       type="number"
                       step="0.01"
                       min="0"
                       max="10"
+                      aria-label="Desired Target CGPA"
                       value={targetCgpa}
                       onChange={e => setTargetCgpa(Number(e.target.value))}
                       className="w-full rounded-lg border border-indigo-500/40 bg-white/5 px-3 py-2 text-base font-bold text-indigo-400 focus:border-indigo-400 focus:outline-none"
@@ -605,11 +631,13 @@ export default function GpaCalculatorPage() {
 
                   {/* Upcoming Semester Credits */}
                   <div className="rounded-xl border border-white/5 bg-black/40 p-4">
-                    <label className="block text-xs font-medium text-white/70 mb-1.5">Upcoming Semester Credits</label>
+                    <label htmlFor="upcoming-credits-input" className="block text-xs font-medium text-white/70 mb-1.5">Upcoming Semester Credits</label>
                     <input
+                      id="upcoming-credits-input"
                       type="number"
                       min="1"
                       max="35"
+                      aria-label="Upcoming Semester Credits"
                       value={upcomingCredits}
                       onChange={e => setUpcomingCredits(Number(e.target.value))}
                       className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-base font-semibold text-white focus:border-indigo-500 focus:outline-none"

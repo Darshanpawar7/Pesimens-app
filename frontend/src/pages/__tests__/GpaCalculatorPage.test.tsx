@@ -7,9 +7,9 @@ describe('GpaCalculatorPage', () => {
     render(<GpaCalculatorPage />)
 
     expect(screen.getByText(/GPA & CGPA Calculator/i)).toBeDefined()
-    expect(screen.getByRole('button', { name: /SGPA Calculator/i })).toBeDefined()
-    expect(screen.getByRole('button', { name: /CGPA Calculator/i })).toBeDefined()
-    expect(screen.getByRole('button', { name: /Target Predictor/i })).toBeDefined()
+    expect(screen.getByRole('tab', { name: /SGPA Calculator/i })).toBeDefined()
+    expect(screen.getByRole('tab', { name: /CGPA Calculator/i })).toBeDefined()
+    expect(screen.getByRole('tab', { name: /Target Predictor/i })).toBeDefined()
   })
 
   it('correctly maps PES University grade points', () => {
@@ -50,7 +50,7 @@ describe('GpaCalculatorPage', () => {
   it('switches to CGPA tab and computes cumulative GPA', () => {
     render(<GpaCalculatorPage />)
 
-    const cgpaTabBtn = screen.getByRole('button', { name: /CGPA Calculator/i })
+    const cgpaTabBtn = screen.getByRole('tab', { name: /CGPA Calculator/i })
     fireEvent.click(cgpaTabBtn)
 
     expect(screen.getByText(/Past Semesters/i)).toBeDefined()
@@ -62,7 +62,7 @@ describe('GpaCalculatorPage', () => {
   it('switches to Target Predictor tab and computes required SGPA', () => {
     render(<GpaCalculatorPage />)
 
-    const targetTabBtn = screen.getByRole('button', { name: /Target Predictor/i })
+    const targetTabBtn = screen.getByRole('tab', { name: /Target Predictor/i })
     fireEvent.click(targetTabBtn)
 
     expect(screen.getByText(/Target Predictor Parameters/i)).toBeDefined()
@@ -76,7 +76,7 @@ describe('GpaCalculatorPage', () => {
   it('shows impossible target warning when target SGPA exceeds 10.0', () => {
     render(<GpaCalculatorPage />)
 
-    const targetTabBtn = screen.getByRole('button', { name: /Target Predictor/i })
+    const targetTabBtn = screen.getByRole('tab', { name: /Target Predictor/i })
     fireEvent.click(targetTabBtn)
 
     // Change target CGPA input to 9.5
@@ -90,7 +90,7 @@ describe('GpaCalculatorPage', () => {
   it('rejects semester credit changes below minimum (< 1)', () => {
     render(<GpaCalculatorPage />)
 
-    const cgpaTabBtn = screen.getByRole('button', { name: /CGPA Calculator/i })
+    const cgpaTabBtn = screen.getByRole('tab', { name: /CGPA Calculator/i })
     fireEvent.click(cgpaTabBtn)
 
     const creditInputs = screen.getAllByPlaceholderText('Credits')
