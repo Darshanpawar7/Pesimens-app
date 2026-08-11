@@ -1,7 +1,7 @@
 import { Link, NavLink } from 'react-router-dom'
 import { useState } from 'react'
 import type { ComponentType } from 'react'
-import { Home, BookOpen, Calendar, Users, Briefcase, Shield, ChevronLeft, ChevronRight, MessageCircle, FileText, MessageSquare, BarChart2, Clock, GraduationCap, Bug } from 'lucide-react'
+import { Home, BookOpen, Calendar, Users, Briefcase, Shield, ChevronLeft, ChevronRight, MessageCircle, FileText, MessageSquare, BarChart2, Clock, GraduationCap, Bug, Calculator } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { useAuthStore } from '../../store/auth'
 import { UserAvatar } from '../ui/avatar'
@@ -17,6 +17,7 @@ import {
 const mainNavItems: Array<{ to: string; label: string; icon: ComponentType<{ className?: string }> | string }> = [
   { to: '/', icon: Home, label: 'Home' },
   { to: '/study', icon: BookOpen, label: 'Study' },
+  { to: '/gpa-calculator', icon: Calculator, label: 'GPA Calculator' },
   { to: '/marketplace', icon: '🛒', label: 'Marketplace' },
   { to: '/campus', icon: Calendar, label: 'Campus' },
   { to: '/placements', icon: Briefcase, label: 'Placements' },
@@ -352,7 +353,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             <p className="mt-4 text-sm text-white/70">This is a student-built, student-run app. We are not affiliated with or monitored by PESU University.</p>
             <p className="mt-3 text-sm text-white/70">Confessions and posts are stored with a random ID, never your SRN or name.</p>
 
-            
+            <a
               href="https://github.com/Darshanpawar7/pesimens-app"
               target="_blank"
               rel="noreferrer"
