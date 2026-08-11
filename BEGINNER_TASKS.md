@@ -1,215 +1,153 @@
 # 🚀 Beginner Tasks - PESIMENS App
 
-Welcome to PESIMENS! This guide helps first-time contributors find easy tasks to get started.
+Welcome to **PESIMENS**! If you are a first-time contributor or looking for good first issues, this guide will help you get started quickly and make meaningful open-source contributions.
 
 ---
 
-fix/mobile-nav-campus-mentors-79
- fix/mobile-nav-campus-mentors-79
-## How to start
+## 🧭 How to Get Started (5-Step Contribution Flow)
 
-## UI and Landing Page
+Follow this standard contributor workflow for a smooth contribution experience:
 
-## UI and Landing Page
+```mermaid
+flowchart LR
+    A["🔍 1. Find Issue"] --> B["🙋 2. Request /assign"]
+    B --> C["🌿 3. Create Branch"]
+    C --> D["💻 4. Code & Test"]
+    D --> E["🚀 5. Submit PR"]
+```
 
-### Task 1: Improve Landing Page Responsiveness
-- **File:** `frontend/src/pages/LandingPage.tsx`
-- **What to do:** Add `sm:`, `md:`, `lg:` Tailwind breakpoint classes to ensure the layout looks good on mobile, tablet, and desktop.
-- **Acceptance Criteria:**
-  - No horizontal scrolling on mobile (< 640px)
-  - Hero section stacks vertically on mobile
-  - PR includes before/after screenshots
-
-### Task 2: UI Polish — Spacing and Typography
-- **File:** `frontend/src/pages/LandingPage.tsx`, `frontend/src/index.css`
-- **What to do:** Improve spacing, font sizes, and line heights for better readability.
-- **Acceptance Criteria:**
-  - Consistent padding/margin using Tailwind spacing scale
-  - Typography is readable on all screen sizes
-  - No visual regressions on desktop
-
-### Task 3: Create Reusable UI Components
-- **File:** `frontend/src/components/common/`
-- **What to do:** Extract repeated UI patterns into reusable components such as `Spinner`, `Badge`, `EmptyState`, or `ConfirmModal`.
-- **Acceptance Criteria:**
-  - Component is placed in `frontend/src/components/common/`
-  - Component accepts props with TypeScript interfaces
-  - Component is used in at least one existing page
-
-### Task 4: Accessibility Fixes
-- **File:** `frontend/src/components/` (any component)
-- **What to do:** Add missing `aria-label`, `alt` text on images, and ensure keyboard navigation works.
-- **Acceptance Criteria:**
-  - All interactive elements have accessible labels
-  - Images have descriptive `alt` text
-  - No accessibility warnings in browser DevTools
-
----
-dev
-
-### Task 1: Improve Landing Page Responsiveness
-- **File:** `frontend/src/pages/LandingPage.tsx`
-- **What to do:** Add `sm:`, `md:`, `lg:` Tailwind breakpoint classes to ensure the layout looks good on mobile, tablet, and desktop.
-- **Acceptance Criteria:**
-  - No horizontal scrolling on mobile (< 640px)
-  - Hero section stacks vertically on mobile
-  - PR includes before/after screenshots
-
- fix/mobile-nav-campus-mentors-79
-### Task 2: UI Polish — Spacing and Typography
-- **File:** `frontend/src/pages/LandingPage.tsx`, `frontend/src/index.css`
-- **What to do:** Improve spacing, font sizes, and line heights for better readability.
-- **Acceptance Criteria:**
-  - Consistent padding/margin using Tailwind spacing scale
-  - Typography is readable on all screen sizes
-  - No visual regressions on desktop
-
-### Task 3: Create Reusable UI Components
-- **File:** `frontend/src/components/common/`
-- **What to do:** Extract repeated UI patterns into reusable components such as `Spinner`, `Badge`, `EmptyState`, or `ConfirmModal`.
-- **Acceptance Criteria:**
-  - Component is placed in `frontend/src/components/common/`
-  - Component accepts props with TypeScript interfaces
-  - Component is used in at least one existing page
-
-### Task 4: Accessibility Fixes
-- **File:** `frontend/src/components/` (any component)
-- **What to do:** Add missing `aria-label`, `alt` text on images, and ensure keyboard navigation works.
-- **Acceptance Criteria:**
-  - All interactive elements have accessible labels
-  - Images have descriptive `alt` text
-  - No accessibility warnings in browser DevTools
-
----
- dev
-
-1. Pick a small task and open an issue describing it.
-2. Wait for confirmation before starting work.
-3. Submit a focused PR with screenshots for UI changes.
-
- fix/mobile-nav-campus-mentors-79
----
-
-## 📋 Task Categories
-
-| Category | Difficulty | Estimated Time |
-|----------|------------|----------------|
-| 🎨 UI/UX | Easy | 30 min - 1 hour |
-| 📝 Documentation | Easy | 15 - 30 min |
-| 🐛 Bug Fixes | Medium | 1 - 2 hours |
-| ⚡ Performance | Medium | 1 - 2 hours |
+1. **Find an Issue:** Browse open issues with the [`good first issue`](https://github.com/Darshanpawar7/Pesimens-app/labels/good%20first%20issue) or [`gssoc2026`](https://github.com/Darshanpawar7/Pesimens-app/labels/gssoc2026) label. If you found a new bug or improvement, [open a new issue](https://github.com/Darshanpawar7/Pesimens-app/issues/new) first.
+2. **Request Assignment:** Comment on the issue to request assignment (e.g., `"Hi @maintainer, I would like to work on this issue. /assign"`). Wait for the bot/maintainer to assign the issue to you before writing code.
+3. **Create a Feature Branch:** Fork the repository and create a descriptive branch:
+   ```bash
+   git checkout -b fix/landing-page-spacing
+   # or
+   git checkout -b feat/reusable-spinner-component
+   ```
+4. **Develop and Test Locally:**
+   ```bash
+   cd frontend
+   npm install
+   npm run dev       # Start local dev server at http://localhost:5173
+   npm run lint      # Check ESLint rules
+   npm run test      # Run Vitest test suite
+   ```
+5. **Submit a Pull Request (PR):**
+   - Keep your PR scoped to a single issue.
+   - Reference the issue in your PR body: `Closes #<issue_number>`.
+   - Attach **before & after screenshots** or screen recordings for all UI changes.
 
 ---
 
-## 🎨 UI/UX Tasks
+## 📋 Task Categories Matrix
 
-### 1. Improve Landing Page Spacing
-
-**File:** `src/pages/LandingPage.tsx` (Lines 40-80)
-
-**Current Issue:** Spacing between sections is inconsistent.
-
-**Acceptance Criteria:**
-- [ ] Consistent padding (px-8 or py-12) across all sections
-- [ ] Mobile responsive spacing
-- [ ] No horizontal overflow on small screens
-
-**How to Find:**
-```bash
-# Open the file
-code src/pages/LandingPage.tsx
-# Look for className="..." and adjust spacing
-
-### Task 5: Fix Typos and Improve Clarity
-- **File:** `docs/`, `README.md`, `CONTRIBUTING.md`
-- **What to do:** Fix spelling mistakes, improve sentence clarity, and add missing punctuation.
-- **Acceptance Criteria:**
-  - No spelling errors in modified files
-  - Sentences are clear and concise
-
-### Task 6: Expand Onboarding Steps
-- **File:** `CONTRIBUTING.md`
-- **What to do:** Add more detailed steps for first-time contributors — how to set up the project locally, run the dev server, and submit a PR.
-- **Acceptance Criteria:**
-  - Step-by-step setup instructions are clear
-  - Includes commands to run frontend and backend locally
-  - New contributors can follow without prior context
+| Category | Difficulty | Estimated Time | Key Skills |
+|:---|:---|:---|:---|
+| 🎨 **UI & Responsiveness** | Easy / Medium | 30 min – 1.5 hrs | Tailwind CSS, React, Responsive Design |
+| ♿ **Accessibility (a11y)** | Easy | 20 – 45 min | Semantic HTML, ARIA, Keyboard Nav |
+| ⚡ **Developer Experience (DX)** | Medium | 45 min – 2 hrs | Vitest, TypeScript, ESLint |
+| 📝 **Documentation** | Easy | 15 – 30 min | Markdown, Technical Writing |
 
 ---
 
-## Developer Experience
+## 🎨 1. UI & Responsiveness Tasks
 
-### Task 7: Improve README Sections
-- **File:** `README.md`
-- **What to do:** Add missing sections such as Tech Stack, Project Structure, or Screenshots.
-- **Acceptance Criteria:**
-  - README has a clear project description
-  - Tech stack is listed with versions
-  - At least one screenshot or demo link is included
+### Task 1.1: Improve Landing Page Mobile Breakpoints
+* **Target File:** `frontend/src/pages/LandingPage.tsx`
+* **What to do:** Add `sm:`, `md:`, and `lg:` Tailwind breakpoint classes so that hero sections, feature grids, and social proof counters wrap cleanly on mobile screens (`< 640px`).
+* **Acceptance Criteria:**
+  - [ ] No horizontal scrollbars on mobile viewport widths (320px – 480px).
+  - [ ] Hero CTA buttons stack vertically on mobile.
+  - [ ] Feature cards adjust into a single column on small screens.
+  - [ ] PR contains before & after mobile screenshots.
 
-### Task 8: Add or Improve Linting Docs
-- **File:** `CONTRIBUTING.md`, `README.md`
-- **What to do:** Document how to run the linter and formatter before submitting a PR.
-- **Acceptance Criteria:**
-  - Commands like `npm run lint` and `npm run format` are documented
-  - Contributors know what checks must pass before opening a PR
+### Task 1.2: Spacing & Typography Consistency
+* **Target Files:** `frontend/src/pages/LandingPage.tsx`, `frontend/src/index.css`
+* **What to do:** Ensure padding, margins, line heights, and font weights follow the standard Tailwind spacing scale (`p-4`, `py-8`, `gap-6`, etc.).
+* **Acceptance Criteria:**
+  - [ ] Consistent section padding across landing page sections.
+  - [ ] Proper contrast and font size scaling for headers (`h1`, `h2`, `h3`).
+  - [ ] No visual regressions on desktop displays.
 
----
-
-## How to Start
-
-1. Pick a task from the list above and open an issue describing what you plan to do.
-2. Wait for a maintainer to confirm and assign the issue to you.
-3. Fork the repo and create a branch: `git checkout -b docs/your-task-name`
-4. Make your changes and submit a focused PR.
-5. For UI changes, include **before/after screenshots** in your PR description.
-
-> **Tip:** Keep PRs small and focused — one task per PR works best!
- dev
-
-### Task 5: Fix Typos and Improve Clarity
-- **File:** `docs/`, `README.md`, `CONTRIBUTING.md`
-- **What to do:** Fix spelling mistakes, improve sentence clarity, and add missing punctuation.
-- **Acceptance Criteria:**
-  - No spelling errors in modified files
-  - Sentences are clear and concise
-
-### Task 6: Expand Onboarding Steps
-- **File:** `CONTRIBUTING.md`
-- **What to do:** Add more detailed steps for first-time contributors — how to set up the project locally, run the dev server, and submit a PR.
-- **Acceptance Criteria:**
-  - Step-by-step setup instructions are clear
-  - Includes commands to run frontend and backend locally
-  - New contributors can follow without prior context
+### Task 1.3: Build Reusable Common UI Components
+* **Target Directory:** `frontend/src/components/common/`
+* **What to do:** Extract repeated UI widgets into reusable, strongly-typed components (e.g. `EmptyState`, `Spinner`, `Badge`, `ConfirmModal`).
+* **Acceptance Criteria:**
+  - [ ] Component accepts typed props using TypeScript interfaces.
+  - [ ] Supports dark/light mode classes.
+  - [ ] Component is integrated into at least one existing page.
 
 ---
 
-## Developer Experience
+## ♿ 2. Accessibility (a11y) Tasks
 
-### Task 7: Improve README Sections
-- **File:** `README.md`
-- **What to do:** Add missing sections such as Tech Stack, Project Structure, or Screenshots.
-- **Acceptance Criteria:**
-  - README has a clear project description
-  - Tech stack is listed with versions
-  - At least one screenshot or demo link is included
+### Task 2.1: Add Missing ARIA Labels & Accessible Names
+* **Target Files:** `frontend/src/components/layout/`, `frontend/src/components/common/`
+* **What to do:** Add descriptive `aria-label` attributes to icon-only buttons (e.g. close buttons, notification bell, theme toggle, mobile hamburger menu).
+* **Acceptance Criteria:**
+  - [ ] All icon buttons have an accessible name (`aria-label="..."`).
+  - [ ] Screen readers properly announce button purposes.
+  - [ ] No accessibility warnings in browser DevTools.
 
-### Task 8: Add or Improve Linting Docs
-- **File:** `CONTRIBUTING.md`, `README.md`
-- **What to do:** Document how to run the linter and formatter before submitting a PR.
-- **Acceptance Criteria:**
-  - Commands like `npm run lint` and `npm run format` are documented
-  - Contributors know what checks must pass before opening a PR
+### Task 2.2: Add Meaningful Alt Text on Images & Logos
+* **Target Files:** `frontend/src/pages/`, `frontend/src/components/`
+* **What to do:** Ensure all `<img>` tags have descriptive `alt` attributes instead of generic or missing text.
+* **Acceptance Criteria:**
+  - [ ] Logos, user avatars, and illustration images contain descriptive alt text.
+  - [ ] Purely decorative images use `alt=""` and `aria-hidden="true"`.
+
+### Task 2.3: Keyboard Navigation & Focus Indicators
+* **Target Files:** `frontend/src/components/ui/`, `frontend/src/components/layout/TopNav.tsx`
+* **What to do:** Ensure all interactive dropdowns, modals, and navigation links are accessible via keyboard (`Tab`, `Enter`, `Escape`) and have visible focus rings (`focus-visible:ring-2`).
+* **Acceptance Criteria:**
+  - [ ] Modals can be dismissed using the `Escape` key.
+  - [ ] Focus rings are visible when tabbing through navigation.
 
 ---
 
-## How to Start
+## ⚡ 3. Developer Experience (DX) & Testing Tasks
 
-1. Pick a task from the list above and open an issue describing what you plan to do.
-2. Wait for a maintainer to confirm and assign the issue to you.
-3. Fork the repo and create a branch: `git checkout -b docs/your-task-name`
-4. Make your changes and submit a focused PR.
-5. For UI changes, include **before/after screenshots** in your PR description.
+### Task 3.1: Add Unit Tests for Utility Functions & Components
+* **Target Directories:** `frontend/src/__tests__/`, `frontend/src/lib/__tests__/`
+* **What to do:** Write Vitest unit tests for helper functions (e.g. date formatters, validation helpers in `frontend/src/lib/validation.ts`).
+* **Acceptance Criteria:**
+  - [ ] Unit tests written using Vitest and `@testing-library/react`.
+  - [ ] All tests pass cleanly when running `npm run test`.
+  - [ ] Tests cover both happy paths and edge cases.
 
-> **Tip:** Keep PRs small and focused — one task per PR works best!
- dev
+### Task 3.2: Enhance ESLint & Type Safety Coverage
+* **Target Files:** `frontend/src/`
+* **What to do:** Identify and eliminate any implicit `any` types or unused variables across component files.
+* **Acceptance Criteria:**
+  - [ ] `npm run lint` passes with 0 warnings and 0 errors.
+  - [ ] `npm run build` (`tsc && vite build`) compiles without TypeScript errors.
+
+---
+
+## 📝 4. Documentation Tasks
+
+### Task 4.1: Expand Local Setup & Troubleshooting Guide
+* **Target Files:** `docs/QUICK_START_GUIDE.md`, `README.md`
+* **What to do:** Add troubleshooting tips for common local setup issues (e.g., node version requirements, port conflicts, environment variable setup).
+* **Acceptance Criteria:**
+  - [ ] Step-by-step instructions are clear for Windows, macOS, and Linux users.
+  - [ ] Clear `.env.example` guidance provided.
+
+### Task 4.2: Fix Typos and Improve Documentation Clarity
+* **Target Files:** `docs/`, `README.md`, `CONTRIBUTING.md`
+* **What to do:** Correct spelling mistakes, clarify ambiguous phrasing, and ensure consistent markdown formatting across all docs.
+* **Acceptance Criteria:**
+  - [ ] Zero grammatical and spelling errors.
+  - [ ] All relative links to files and docs are valid and clickable.
+
+---
+
+## ✅ Pull Request Submission Checklist
+
+Before submitting your PR, double check the following:
+
+- [ ] **Branching:** Created a branch off `main` / `dev` with a descriptive name.
+- [ ] **Scope:** The PR addresses only the assigned issue.
+- [ ] **Local Verification:** Verified `npm run dev`, `npm run lint`, and `npm run test` pass locally.
+- [ ] **Visual Proof:** Attached before/after screenshots or screen recordings for all UI changes.
+- [ ] **Issue Linked:** Added `Closes #<issue-id>` in the PR description.
