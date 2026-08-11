@@ -130,6 +130,12 @@ export default function GpaCalculatorPage() {
   }
 
   const handleSemesterChange = (id: string, field: keyof SemesterEntry, value: any) => {
+    if (field === 'credits') {
+      const numVal = Number(value)
+      if (isNaN(numVal) || numVal < 1) {
+        return
+      }
+    }
     setSemesters(
       semesters.map(s => (s.id === id ? { ...s, [field]: value } : s))
     )
@@ -144,7 +150,9 @@ export default function GpaCalculatorPage() {
     let totalWeightedSgpa = 0
 
     for (const sem of semesters) {
-      const credits = Number(sem.credits) || 0
+      const credits = Number(sem.credits)
+      if (isNaN(credits) || credits <= 0) continue
+
       const sgpa = Math.min(10, Math.max(0, Number(sem.sgpa) || 0))
       totalCredits += credits
       totalWeightedSgpa += sgpa * credits

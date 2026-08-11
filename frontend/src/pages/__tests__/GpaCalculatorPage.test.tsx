@@ -86,4 +86,20 @@ describe('GpaCalculatorPage', () => {
     // required = (9.5 * 80 - 8.0 * 60) / 20 = (760 - 480) / 20 = 14.00 > 10
     expect(screen.getByText(/Mathematically Impossible/i)).toBeDefined()
   })
+
+  it('rejects semester credit changes below minimum (< 1)', () => {
+    render(<GpaCalculatorPage />)
+
+    const cgpaTabBtn = screen.getByRole('button', { name: /CGPA Calculator/i })
+    fireEvent.click(cgpaTabBtn)
+
+    const creditInputs = screen.getAllByPlaceholderText('Credits')
+    const firstCreditInput = creditInputs[0] as HTMLInputElement
+
+    // Try setting to 0 (below allowed minimum 1)
+    fireEvent.change(firstCreditInput, { target: { value: '0' } })
+
+    // Value should remain original (20) and not change to 0
+    expect(firstCreditInput.value).toBe('20')
+  })
 })
