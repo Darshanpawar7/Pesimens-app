@@ -415,7 +415,7 @@ const searchDepth = depthMap[difficulty] ?? 8
 const stockfishMoveResult = await new Promise<string | null>((resolve) => {
   try {
     const worker = new Worker(
-      new URL('../workers/stockfish.worker.ts', import.meta.url),
+      new URL('../../workers/stockfish.worker.ts', import.meta.url),
       { type: 'module' }
     )
     const timeout = setTimeout(() => {
