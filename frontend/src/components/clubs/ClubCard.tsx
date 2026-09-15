@@ -46,7 +46,7 @@ export function ClubCard({ club, compact = false }: ClubCardProps) {
           {/* Logo */}
           <div className="absolute -bottom-5 left-4 h-12 w-12 rounded-xl border-2 border-white dark:border-gray-800 bg-[#1a1a1a] dark:bg-gray-700 overflow-hidden shadow-none">
             {club.logo_url ? (
-              <img src={club.logo_url} alt={club.name} className="w-full h-full object-cover" />
+              <img src={club.logo_url} alt={`${club.name} logo`} className="w-full h-full object-cover" />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-lg font-bold text-indigo-600 dark:text-indigo-400">
                 {club.name[0]}
