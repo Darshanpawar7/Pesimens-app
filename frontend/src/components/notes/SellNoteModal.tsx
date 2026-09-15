@@ -15,6 +15,7 @@ export function SellNoteModal({ open, onClose, onSuccess }: Props) {
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [file, setFile] = useState<File | null>(null)
+  const [dragOver, setDragOver] = useState(false)
   const [form, setForm] = useState({
     title: '',
     subject: '',
@@ -122,10 +123,29 @@ export function SellNoteModal({ open, onClose, onSuccess }: Props) {
           />
 
           <div
-            className="cursor-pointer rounded-lg border border-dashed border-[#2a2a2a] bg-[#0f0f0f] p-4 text-center text-sm text-white/60 hover:border-[#6366f1]/60"
+            className={`cursor-pointer rounded-lg border-2 border-dashed p-6 text-center text-sm transition-all focus:outline-none focus:ring-2 focus:ring-[#6366f1] focus:ring-offset-2 focus:ring-offset-[#111111] ${
+              dragOver
+                ? 'border-[#6366f1] bg-[#6366f1]/10 text-white'
+                : 'border-[#2a2a2a] bg-[#0f0f0f] text-white/60 hover:border-[#6366f1]/60 hover:text-white/80'
+            }`}
             onClick={() => fileRef.current?.click()}
+            onDragOver={e => {
+              e.preventDefault()
+              setDragOver(true)
+            }}
+            onDragLeave={() => setDragOver(false)}
+            onDrop={e => {
+              e.preventDefault()
+              setDragOver(false)
+              const droppedFile = e.dataTransfer.files?.[0] ?? null
+              if (droppedFile) pickFile(droppedFile)
+            }}
             role="button"
-            aria-label="Upload file dropzone"
+            aria-label={
+              file
+                ? `Selected file: ${file.name}, ${Math.round(file.size / 1024)} KB. Press Enter or Space to replace.`
+                : 'Upload PDF file dropzone (max 15MB)'
+            }
             tabIndex={0}
             onKeyDown={e => {
               if (e.key === 'Enter' || e.key === ' ') {
@@ -139,12 +159,19 @@ export function SellNoteModal({ open, onClose, onSuccess }: Props) {
               type="file"
               accept="application/pdf"
               className="hidden"
+              onClick={e => e.stopPropagation()}
               onChange={e => pickFile(e.target.files?.[0] ?? null)}
             />
-            {file ? `${file.name} (${Math.round(file.size / 1024)} KB)` : 'Upload PDF (max 15MB)'}
+            {file ? (
+              <p className="font-medium text-white">
+                {file.name} ({Math.round(file.size / 1024)} KB)
+              </p>
+            ) : (
+              <p>Upload PDF (max 15MB)</p>
+            )}
           </div>
 
-          {error && <p className="text-sm text-red-400">{error}</p>}
+          {error && <p role="alert" className="text-sm text-red-400">{error}</p>}
 
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={onClose} disabled={uploading}>
