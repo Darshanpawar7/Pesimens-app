@@ -288,6 +288,8 @@ cp .env.example .env
 
 If you have access to the live API, set `VITE_API_URL` accordingly.
 
+**Running without API access?** Use `npm run dev:mock` — a Mock Service Worker (MSW) intercepts all API calls and returns sample data, so you can develop and test the UI locally without needing backend credentials. This covers auth, profile, and the main home feed endpoints (events, confessions, placements, clubs, marketplace).
+
 ---
 
 ## 🤝 Contributing (GSSOC 2026)
