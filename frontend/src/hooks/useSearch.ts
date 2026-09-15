@@ -8,13 +8,15 @@ export interface SearchResults {
     pyqs?: { id: string; subject: string; course: string; exam_type: string; year: number }[]
     mentors?: { id: string; display_name: string; expertise: string; company: string }[]
     placements?: { id: string; company: string; role: string; package_lpa: number; year: number }[]
+    people?: { id: string; display_name: string; branch: string; campus: string; role: string }[]
+    marketplace?: { id: string; title: string; price: number; condition: string; category: string }[]
   }
   total_count: number
   query: string
 }
 
 const RECENT_KEY = 'pesu_hub_recent_searches'
-const MAX_RECENT = 8
+const MAX_RECENT = 5
 
 export function saveRecentSearch(q: string) {
   try {
