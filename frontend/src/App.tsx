@@ -61,9 +61,10 @@ const GamesPage = lazy(lazyImport(() => import('./pages/GamesPage')))
 const LudoPage = lazy(lazyImport(() => import('./pages/LudoPage')))
 const ChessPage = lazy(lazyImport(() => import('./pages/ChessPage')))
 const PESBluffPage = lazy(lazyImport(() => import('./pages/PESBluffPage')))
-const PESDrawlPage = lazy(lazyImport(() => import('./pages/PESDrawlPage.tsx')))
+const PESDrawlPage = lazy(lazyImport(() => import('./pages/PESDrawlPage')))
 const NotFoundPage = lazy(lazyImport(() => import('./pages/NotFoundPage')))
 const AcademicAdvisorPage = lazy(lazyImport(() => import('./pages/AcademicAdvisorPage')))
+const GpaCalculatorPage = lazy(lazyImport(() => import('./pages/GpaCalculatorPage')))
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -126,6 +127,7 @@ function App() {
                     <Route path="/games/bluff" element={<Suspense fallback={<PageLoader />}><PESBluffPage /></Suspense>} />
                     <Route path="/games/drawl" element={<Suspense fallback={<PageLoader />}><PESDrawlPage /></Suspense>} />
                     <Route path="/advisor" element={<Suspense fallback={<PageLoader />}><AcademicAdvisorPage /></Suspense>} />
+                    <Route path="/gpa-calculator" element={<Suspense fallback={<PageLoader />}><GpaCalculatorPage /></Suspense>} />
                   </Route>
 
                   <Route path="*" element={<Suspense fallback={<PageLoader />}><NotFoundPage /></Suspense>} />

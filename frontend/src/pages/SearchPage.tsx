@@ -1,23 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, type KeyboardEvent } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
-import { Search, Calendar, Users, BookOpen, UserCheck, Briefcase, ShoppingBag, User } from 'lucide-react'
-import { useQuery } from '@tanstack/react-query'
-import { apiFetch } from '../lib/api'
+import { Search, Calendar, Users, BookOpen, UserCheck, Briefcase, ShoppingBag, User, Clock, Trash2 } from 'lucide-react'
+import { useSearch, getRecentSearches, clearRecentSearches } from '../hooks/useSearch'
 import { Skeleton } from '../components/ui/skeleton'
-
-interface SearchResults {
-  results: {
-    events?: { id: string; title: string; category: string; start_time: string }[]
-    clubs?: { id: string; name: string; category: string; member_count: number }[]
-    pyqs?: { id: string; subject: string; course: string; exam_type: string; year: number }[]
-    mentors?: { id: string; display_name: string; expertise: string; company: string }[]
-    placements?: { id: string; company: string; role: string; package_lpa: number; year: number }[]
-    people?: { id: string; display_name: string; branch: string; campus: string; role: string }[]
-    marketplace?: { id: string; title: string; price: number; condition: string; category: string }[]
-  }
-  total_count: number
-  query: string
-}
 
 const typeIcons = {
   events: Calendar,
@@ -55,33 +40,107 @@ export default function SearchPage() {
   const q = searchParams.get('q') ?? ''
   const normalizedQ = q.trim()
 
+  const [recentSearches, setRecentSearches] = useState<string[]>(() => getRecentSearches())
+  const [showRecents, setShowRecents] = useState(false)
+  const [activeIndex, setActiveIndex] = useState(-1)
+  const containerRef = useRef<HTMLDivElement>(null)
+
   useEffect(() => { setInput(q) }, [q])
 
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['search', normalizedQ],
-    queryFn: () => apiFetch<SearchResults>(`/api/search?q=${encodeURIComponent(normalizedQ)}`),
-    enabled: normalizedQ.length >= 2,
-    staleTime: 60 * 1000,
-  })
+  const { data, isLoading, isError, error } = useSearch(normalizedQ)
+
+  // A completed search persists to localStorage inside useSearch's queryFn;
+  // refresh local state so the dropdown reflects it without a manual re-read.
+  useEffect(() => {
+    if (data) setRecentSearches(getRecentSearches())
+  }, [data])
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setShowRecents(false)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
+
+  const runSearch = (term: string) => {
+    setInput(term)
+    setSearchParams({ q: term })
+    setShowRecents(false)
+    setActiveIndex(-1)
+  }
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
-    if (input.trim()) setSearchParams({ q: input.trim() })
+    if (input.trim()) runSearch(input.trim())
+  }
+
+  const handleClearRecents = () => {
+    clearRecentSearches()
+    setRecentSearches([])
+  }
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (!showRecents || recentSearches.length === 0) return
+    if (e.key === 'ArrowDown') { e.preventDefault(); setActiveIndex(i => Math.min(i + 1, recentSearches.length - 1)) }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); setActiveIndex(i => Math.max(i - 1, -1)) }
+    else if (e.key === 'Enter' && activeIndex >= 0) { e.preventDefault(); runSearch(recentSearches[activeIndex]) }
+    else if (e.key === 'Escape') { setShowRecents(false); setActiveIndex(-1) }
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-6 space-y-6">
+    <div ref={containerRef} className="max-w-3xl mx-auto px-4 py-6 space-y-6">
       <form onSubmit={handleSearch}>
         <div className="relative">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/40" />
           <input
             autoFocus
             value={input}
-            onChange={e => setInput(e.target.value)}
+            onChange={e => { setInput(e.target.value); setActiveIndex(-1) }}
+            onFocus={() => setShowRecents(!input.trim() && recentSearches.length > 0)}
+            onKeyDown={handleKeyDown}
             placeholder="Search people, marketplace, events, clubs, PYQs, mentors..."
             className="w-full pl-12 pr-4 py-3 rounded-xl border border-[#2a2a2a] bg-[#1a1a1a] text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-base"
+            aria-autocomplete="list"
+            aria-expanded={showRecents}
           />
         </div>
+
+        {showRecents && recentSearches.length > 0 && (
+          <div
+            role="listbox"
+            aria-label="Recent searches"
+            className="mt-2 rounded-xl border border-[#2a2a2a] bg-[#1a1a1a] overflow-hidden"
+          >
+            <div className="flex items-center justify-between px-3 py-2">
+              <span className="text-[11px] font-semibold text-white/50 uppercase tracking-wider">Recent</span>
+              <button
+                type="button"
+                onClick={handleClearRecents}
+                className="flex items-center gap-1 text-[11px] text-white/50 hover:text-white/80 transition-colors"
+              >
+                <Trash2 className="h-3 w-3" /> Clear
+              </button>
+            </div>
+            {recentSearches.map((term, i) => (
+              <button
+                key={term}
+                type="button"
+                role="option"
+                aria-selected={i === activeIndex}
+                onClick={() => runSearch(term)}
+                className={`flex items-center gap-2.5 w-full px-3 py-2.5 text-sm text-white/80 text-left transition-colors ${
+                  i === activeIndex ? 'bg-white/10' : 'hover:bg-white/5'
+                }`}
+              >
+                <Clock className="h-3.5 w-3.5 text-white/40 shrink-0" />
+                {term}
+              </button>
+            ))}
+          </div>
+        )}
       </form>
 
       {!normalizedQ && (

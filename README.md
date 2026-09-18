@@ -288,6 +288,8 @@ cp .env.example .env
 
 If you have access to the live API, set `VITE_API_URL` accordingly.
 
+**Running without API access?** Use `npm run dev:mock` — a Mock Service Worker (MSW) intercepts all API calls and returns sample data, so you can develop and test the UI locally without needing backend credentials. This covers auth, profile, and the main home feed endpoints (events, confessions, placements, clubs, marketplace).
+
 ---
 
 ## 🤝 Contributing (GSSOC 2026)
@@ -478,3 +480,29 @@ This public repo intentionally excludes:
 <p align="center">
   Built for PES University students with a strong focus on product quality, privacy, and security.
 </p>
+
+## Troubleshooting
+
+### Installation fails
+- Ensure you are using the supported Node.js version.
+- Run `npm install` or `npm ci`.
+- Delete `node_modules` and reinstall dependencies if necessary.
+
+### Environment variables not loading
+- Verify that a `.env` file exists.
+- Ensure all required variables are defined.
+- Restart the development server after making changes.
+
+## FAQ
+
+### How do I start the project?
+Run:
+
+```bash
+npm install
+npm run dev
+```
+
+### How do I report a bug?
+Please open a GitHub issue with reproduction steps and relevant logs.
+
