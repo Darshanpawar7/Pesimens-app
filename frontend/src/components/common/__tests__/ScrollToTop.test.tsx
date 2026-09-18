@@ -93,6 +93,32 @@ describe('ScrollToTop component', () => {
     // Click button
     fireEvent.click(button)
     expect(scrollToMock).toHaveBeenCalledWith({ top: 0, behavior: 'smooth' })
+    // A scroll container owns the scrolling, so the window must be left alone.
+    expect(window.scrollTo).not.toHaveBeenCalled()
+  })
+
+  it('scrolls the window when no targetRef is supplied', () => {
+    render(<ScrollToTop />)
+
+    fireEvent.click(screen.getByRole('button', { name: /scroll to top/i }))
+
     expect(window.scrollTo).toHaveBeenCalledWith({ top: 0, behavior: 'smooth' })
+  })
+
+  it('is removed from the tab order while hidden', () => {
+    render(<ScrollToTop threshold={300} />)
+    const button = screen.getByRole('button', { name: /scroll to top/i })
+
+    expect(button).toHaveAttribute('tabindex', '-1')
+    expect(button.className).toContain('invisible')
+
+    act(() => {
+      Object.defineProperty(window, 'scrollY', { value: 450, writable: true, configurable: true })
+      window.dispatchEvent(new Event('scroll'))
+    })
+
+    expect(button).toHaveAttribute('tabindex', '0')
+    // 'invisible' contains 'visible', so assert its absence rather than a substring match.
+    expect(button.className).not.toContain('invisible')
   })
 })
